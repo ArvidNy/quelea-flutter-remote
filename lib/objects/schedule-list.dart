@@ -12,6 +12,10 @@ class ScheduleList {
     return _items;
   }
 
+  int getLiveItemPos() {
+    return _items.indexWhere((element) => element.isLive);
+  }
+
   @override
   String toString() {
     String s = "";

@@ -5,26 +5,26 @@ import '../handlers/download-handler.dart';
 import '../utils/global-utils.dart' as global;
 
 /// A page for setting the user options.
-/// 
+///
 /// Note: A lot of the settings are currently
 /// disabled as the features are not yet
 /// implemented in this beta version.
 /// It's on the TODO list.
 class SettingsPage extends StatefulWidget {
-  SettingsPage({Key key, this.title, this.disableRecord}) : super(key: key);
+  SettingsPage({Key key, this.title, this.settingsFunctions}) : super(key: key);
 
   final String title;
-  final Function disableRecord;
+  final Map<String, Function> settingsFunctions;
 
   @override
-  _SettingsPageState createState() => _SettingsPageState(disableRecord);
+  _SettingsPageState createState() => _SettingsPageState(settingsFunctions);
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  Function setDisableRecord;
+  Map<String, Function> settingsFunctions;
 
-  _SettingsPageState(this.setDisableRecord);
+  _SettingsPageState(this.settingsFunctions);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,8 @@ class _SettingsPageState extends State<SettingsPage> {
             PrefService.setString("server_url", s);
             global.url = s;
           },
-          onChange: () { // Does not work at the moment
+          onChange: () {
+            // Does not work at the moment
             DownloadHandler().testConnection(global.url, context);
           },
         ),
@@ -53,8 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
           'autoconnect_use',
           disabled: true,
           onChange: () {
-            setState(() {
-            });
+            setState(() {});
           },
           onDisable: () {
             PrefService.setBool('exp_showos', false);
@@ -93,9 +93,16 @@ class _SettingsPageState extends State<SettingsPage> {
         DropdownPreference(
           'Swipe navigation action',
           'swipe_navigation_action',
-          defaultVal: 'Do nothing',
-          values: ['Do nothing', 'Next/previous slide', 'Next/previous item'],
-          disabled: true,
+          defaultVal: 'off',
+          values: ['off', 'slide', 'item'],
+          displayValues: ['Do nothing', 'Next/previous slide', 'Next/previous item'],
+          disabled: false,
+          onChange: (change) {
+            settingsFunctions['swipe'](
+              !PrefService.getString("swipe_navigation_action")
+                  .contains("off"));
+                  print(PrefService.getString("swipe_navigation_action"));
+                  },
         ),
         CheckboxPreference(
           'Use d-pad navigation',
@@ -115,7 +122,7 @@ class _SettingsPageState extends State<SettingsPage> {
             'exp_showos',
             desc: 'This option shows the users operating system in his profile',
           )
-        ], '!advanced_enabled'), 
+        ], '!advanced_enabled'),
         PreferenceTitle('General settings'),
         CheckboxPreference(
           'Disable the record button',
@@ -123,7 +130,7 @@ class _SettingsPageState extends State<SettingsPage> {
           disabled: false,
           defaultVal: false,
           onChange: () {
-              setDisableRecord(PrefService.getBool("disable_record"));
+            settingsFunctions['record'](PrefService.getBool("disable_record"));
           },
         ),
         DropdownPreference(
@@ -139,22 +146,44 @@ class _SettingsPageState extends State<SettingsPage> {
           leading: Icon(Icons.info),
           trailing: Icon(Icons.keyboard_arrow_right),
           page: PreferencePage([
-            PreferenceText("About the app", onTap: () => _showAboutDialog(context),),
-                        PreferenceText("Contact the developer", onTap: () => null,),
-                        PreferenceText("How to translate the app", onTap: () => null,),
-                        PreferenceText("Privacy policy", onTap: () => null,),
-                      ]),
-                    ),
-                  ]),
-                );
-              }
-              _showAboutDialog(BuildContext context) {
-                showAboutDialog(context: context, applicationName: "Quelea Mobile Remote", applicationVersion: "0.1.0", applicationLegalese: "© Quelea 2020", applicationIcon:  Image.asset("images/ic_launcher.png"), children: <Widget>[
-                  Text("This app is a non-profit app made to be used with the open source church software Quelea (http://quelea.org). This version is still in beta, so it's not flawless yet nor is it feature complete. This is a side project and mostly meant for personal usage, but is gladly shared with anyone who might find it useful."),
-                  Text("\n"),
-                  Text("Feel free to send me an email at arvid @ quelea.org if you have any questions or are experiencing issues, but make sure you\'ve started Quelea before the app (with both servers active), that both devices are connected to same network and that you\'ve entered the correct URL first."),
-                  Text("\n"),
-                  Text("I cannot guarantee a flawless experience, so I will not take responsibility for any issues that could occur in a live setting.")
-                ]);
-              }
+            PreferenceText(
+              "About the app",
+              onTap: () => _showAboutDialog(context),
+            ),
+            PreferenceText(
+              "Contact the developer",
+              onTap: () => null,
+            ),
+            PreferenceText(
+              "How to translate the app",
+              onTap: () => null,
+            ),
+            PreferenceText(
+              "Privacy policy",
+              onTap: () => null,
+            ),
+          ]),
+        ),
+      ]),
+    );
+  }
+
+  _showAboutDialog(BuildContext context) {
+    showAboutDialog(
+        context: context,
+        applicationName: "Quelea Mobile Remote",
+        applicationVersion: "0.1.0",
+        applicationLegalese: "© Quelea 2020",
+        applicationIcon: Image.asset("images/ic_launcher.png"),
+        children: <Widget>[
+          Text(
+              "This app is a non-profit app made to be used with the open source church software Quelea (http://quelea.org). This version is still in beta, so it's not flawless yet nor is it feature complete. This is a side project and mostly meant for personal usage, but is gladly shared with anyone who might find it useful."),
+          Text("\n"),
+          Text(
+              "Feel free to send me an email at arvid @ quelea.org if you have any questions or are experiencing issues, but make sure you\'ve started Quelea before the app (with both servers active), that both devices are connected to same network and that you\'ve entered the correct URL first."),
+          Text("\n"),
+          Text(
+              "I cannot guarantee a flawless experience, so I will not take responsibility for any issues that could occur in a live setting.")
+        ]);
+  }
 }

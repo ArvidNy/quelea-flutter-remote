@@ -9,9 +9,9 @@ import '../widgets/schedule-item.dart';
 /// displays the current schedule.
 class ScheduleDrawer extends StatelessWidget {
   final List<ScheduleItem> scheduleItems;
-  final Function _setDisableRecord;
+  final Map<String, Function> _settingsFunctions;
 
-  ScheduleDrawer(this.scheduleItems, this._setDisableRecord);
+  ScheduleDrawer(this.scheduleItems, this._settingsFunctions);
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class ScheduleDrawer extends StatelessWidget {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => _openSettings(context, _setDisableRecord),
+                onPressed: () => _openSettings(context, _settingsFunctions),
                 child: Row(
                   children: <Widget>[
                     Icon(Icons.settings),
@@ -102,13 +102,13 @@ class ScheduleDrawer extends StatelessWidget {
     });
   }
 
-  void _openSettings(BuildContext context, Function _setDisableRecord) {
+  void _openSettings(BuildContext context, Map<String, Function> _settingsFunctions) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SettingsPage(
           title: "Settings",
-          disableRecord: _setDisableRecord,
+          settingsFunctions: _settingsFunctions,
         ),
       ),
     );

@@ -32,7 +32,7 @@ No known bugs
 - [x] App icons
 - [x] Settings page
     - [ ] Auto-connect
-    - [ ] Swipe navigation
+    - [x] Swipe navigation
     - [ ] Volume navigation
     - [ ] Dpad navigation
     - [ ] Timeout length

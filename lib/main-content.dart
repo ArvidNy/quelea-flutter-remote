@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:preferences/preferences.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import './dialogs/bible-dialog.dart';
@@ -31,7 +32,11 @@ class _MainState extends State<MainPage> {
   bool _isClear = false;
   bool _isRecord = false;
   LiveItem _liveItem = LiveItem("");
-  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemScrollController _itemScrollController = ItemScrollController();
+
+  bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
+      .contains("off");
+  bool _disableRecord = PrefService.getBool("disable_record") ?? false;
 
   void _setRecord(bool isRecord) {
     if (this._isRecord != isRecord) {
@@ -75,7 +80,7 @@ class _MainState extends State<MainPage> {
 
   void _setDisableRecord(bool disable) {
     setState(() {
-      global.disableRecord = disable;
+      _disableRecord = disable;
     });
   }
 
@@ -108,14 +113,24 @@ class _MainState extends State<MainPage> {
     _setRecord(statusHandler.record);
   }
 
+  void _setSwipe(bool swipe) {
+    setState(() {
+      this._useSwipe = swipe;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     global.context = context;
     if (!global.syncHandler.isConnected)
       DownloadHandler().testConnection(global.url, context);
     global.syncHandler.setFunctions(_setLiveItem, _setSchedule, _setStatus);
+    Map<String, Function> settingsStateFunctions = <String, Function>{
+      'record': _setDisableRecord,
+      'swipe': _setSwipe
+    };
     return Scaffold(
-      drawer: ScheduleDrawer(_scheduleItems.getList(), _setDisableRecord),
+      drawer: ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
       drawerScrimColor: Colors.black54,
       appBar: AppBar(
         title: Text(
@@ -133,7 +148,11 @@ class _MainState extends State<MainPage> {
             Expanded(
               child: Row(
                 children: <Widget>[
-                  Expanded(child: LyricsView(_liveItem, itemScrollController)),
+                  Expanded(
+                    child: _useSwipe
+                        ? _getSwipeHandler()
+                        : LyricsView(_liveItem, _itemScrollController),
+                  ),
                   Container(width: 16),
                   NavigationButtons()
                 ],
@@ -156,19 +175,72 @@ class _MainState extends State<MainPage> {
         },
         tooltip: "Search for a song or a Bible passage",
       ),
-      global.disableRecord ? Container() : IconButton(
-        icon: _isRecord
-            ? Icon(Icons.mic, color: Colors.red[300])
-            : Icon(Icons.mic, color: Colors.white),
-        onPressed: () =>
-            DownloadHandler().download(global.url + "/record", () => {}),
-        tooltip: "Start/stop recording",
-      ),
+      _disableRecord
+          ? Container()
+          : IconButton(
+              icon: _isRecord
+                  ? Icon(Icons.mic, color: Colors.red[300])
+                  : Icon(Icons.mic, color: Colors.white),
+              onPressed: () =>
+                  DownloadHandler().download(global.url + "/record", () => {}),
+              tooltip: "Start/stop recording",
+            ),
       IconButton(
         icon: Icon(Icons.warning),
         onPressed: () => global.notImplementedSnackbar(),
         tooltip: "Add a notice",
       ),
     ];
+  }
+
+  _getSwipeHandler() {
+    DismissDirection swipeDirection;
+    if (PrefService.getString("swipe_navigation_action").contains("item")) {
+      if (_scheduleItems.getLiveItemPos() ==
+          _scheduleItems.getList().length - 1) {
+        swipeDirection = DismissDirection.startToEnd;
+      } else if (_scheduleItems.getLiveItemPos() == 0) {
+        swipeDirection = DismissDirection.endToStart;
+      } else {
+        swipeDirection = DismissDirection.horizontal;
+      }
+    } else {
+      if (_liveItem.activeSlide ==
+          _liveItem.lyrics.length - 1) {
+        swipeDirection = DismissDirection.startToEnd;
+      } else if (_liveItem.activeSlide == 0) {
+        swipeDirection = DismissDirection.endToStart;
+      } else {
+        swipeDirection = DismissDirection.horizontal;
+      }
+    }
+    return Dismissible(
+      key: new ValueKey(_liveItem),
+      background: Center(
+        child: CircularProgressIndicator(),
+      ),
+      resizeDuration: null,
+      direction: swipeDirection,
+      onDismissed: (direction) {
+        if (DismissDirection.startToEnd == direction) {
+          DownloadHandler().download(
+              global.url +
+                  (PrefService.getString("swipe_navigation_action")
+                          .contains("item")
+                      ? "/previtem"
+                      : "/prev"),
+              () => {});
+        } else {
+          DownloadHandler().download(
+              global.url +
+                  (PrefService.getString("swipe_navigation_action")
+                          .contains("item")
+                      ? "/nextitem"
+                      : "/next"),
+              () => {});
+        }
+      },
+      child: LyricsView(_liveItem, _itemScrollController),
+    );
   }
 }
