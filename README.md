@@ -7,7 +7,7 @@
 
 Quelea Mobile Remote is an Android and iOS app that allows you to remotely control the free church projection software Quelea. It is a customized version of the web site remote control feature for easier access.
 
-This is a port of the Android version that is not yet complete. However, the most basic features are implemented and the app is in a working state. See the [TODO file](TODO.md) for the current progress state. This version is currenty not available in any app store but can be built for own usage.
+This is a port of the [Android version](https://github.com/quelea-projection/quelea-android-remote) that is not yet complete. However, the most basic features are implemented and the app is in a working state. See the [TODO file](TODO.md) for the current progress state. This version is currenty not available in any app store but can be built for own usage.
 
 Feel free to help improve the code or to use it for your own projects.
 
