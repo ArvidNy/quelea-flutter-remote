@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+
+import '../dialogs/search-item-dialog.dart';
+import '../handlers/download-handler.dart';
+import '../objects/search-item.dart';
+import '../utils/global-utils.dart' as global;
+
+/// A delegate that handles song search on server.
+/// Data is retrieved from the server and displayed
+/// in a `ListView`. An item that is clicked is previewed
+/// in the `showAddSearchItemDialog`.
+class SongSearchDelegate extends SearchDelegate<String> {
+  List<SearchItem> _filterName = new List();
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    print(_filterName.length);
+    return <Widget>[
+      IconButton(
+        tooltip: 'Clear',
+        icon: const Icon((Icons.clear)),
+        onPressed: () {
+          query = '';
+          showSuggestions(context);
+        },
+      ),
+      IconButton(
+        tooltip: 'Help',
+        icon: const Icon((Icons.help)),
+        onPressed: () {
+          // TODO: Add help
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: AnimatedIcon(
+          icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return FutureBuilder<List<SearchItem>>(
+      future: DownloadHandler().searchResults(query),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<SearchItem> data = snapshot.data;
+          return _resultsListView(data);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return CircularProgressIndicator();
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return FutureBuilder<List<SearchItem>>(
+      future: DownloadHandler().searchResults(query),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<SearchItem> data = snapshot.data;
+          return _resultsListView(data);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return CircularProgressIndicator();
+      },
+    );
+  }
+
+  ListView _resultsListView(data) {
+    return ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return new ListTile(
+            title: Text(data[index].title),
+            onTap: () {
+              var id = data[index].id;
+              DownloadHandler().download(global.url + "/song/$id", (lyrics) {
+                showAddSearchItemDialog(context, data[index].title, lyrics, id,
+                    () => close(context, data[index].title));
+              });
+            },
+          );
+        });
+  }
+}

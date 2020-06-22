@@ -1,0 +1,60 @@
+# List of features to implement and bugs left to sort out
+
+## Bugs
+No known bugs
+
+## Features
+- [x] Connecting to a server
+- [x] Entering a URL in a dialog
+- [x] Entering password
+- [x] Viewing the (text) slides of the current item
+- [x] Clicking a slide to navigate through an item
+- [x] Navigation buttons for next slide/item
+- [x] Buttons for hiding the text (logo/black/clear)
+- [x] View the schedule
+- [x] Clicking a schedule item to navigate through the schedule
+- [x] Start recording
+- [x] Opening the search dialog
+- [x] Searching for a song
+- [x] Previewing a song from search results
+- [x] Adding a song from search results
+- [x] Synchronizing the state of the schedule
+- [x] Synchronizing the state of the buttons
+- [x] Synchronizing the state of the current item
+- [x] Show warning if the connection is lost
+- [x] Add layout for buttons
+- [x] Logout
+- [x] Bible search
+- [x] Video play/pause
+- [x] Current item information
+- [x] Image/presentation slide preview
+- [x] Exit from dialog (Android)
+- [x] App icons
+- [x] Settings page
+    - [ ] Auto-connect
+    - [ ] Swipe navigation
+    - [ ] Volume navigation
+    - [ ] Dpad navigation
+    - [ ] Timeout length
+    - [ ] Dark theme
+    - [ ] Disable the recording button
+    - [x] About page
+    - [ ] Reporting a bug/suggesting a feature
+    - [ ] Help translating
+    - [ ] Donate link
+- [ ] Scroll to current slide
+- [ ] Removing items from the schedule
+- [ ] Moving items in the schedule
+- [ ] Global theme select
+- [ ] Notice quick add
+- [ ] Troubleshooting guide
+- [ ] Multiple language support
+- [ ] Search help
+- [ ] Section titles
+- [ ] Keyboard shortcuts
+- [ ] Message if sending a signal failed
+- [ ] Bible add and go live
+- [ ] Ask to exit on back (Android)
+- [ ] Open/close drawer with back (Android)
+- [ ] Add support for ChromeBook (Android)
+- [ ] Crash handling
