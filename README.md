@@ -11,8 +11,6 @@ This is a port of the Android version that is not yet complete. However, the mos
 
 Feel free to help improve the code or to use it for your own projects.
 
-<iframe src="https://github.com/sponsors/ArvidNy/card" title="Sponsor ArvidNy" height="225" width="600" style="border: 0;"></iframe>
-
 <!-- ↑ TEMPORARY TEXT ↑ -->
 
 <!-- <img src="readme_resources/main.png" width="280"/>&nbsp;&nbsp;&nbsp;  <img src="readme_resources/schedule.png" width="280"/>&nbsp;&nbsp;&nbsp; <img src="readme_resources/dark.png" width="280" />
