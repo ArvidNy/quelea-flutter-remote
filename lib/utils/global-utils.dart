@@ -9,6 +9,7 @@ String url = PrefService.getString('server_url') ??
     "http://192.168.0.1:1112"; // Local AVD 10.0.2.2
 BuildContext context;
 bool debug = true;
+bool disableRecord = PrefService.getBool("disable_record") ?? false;
 SyncHandler syncHandler = new SyncHandler();
 final scaffoldKey = GlobalKey<ScaffoldState>();
 String chapterList;

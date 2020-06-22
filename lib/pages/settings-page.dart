@@ -11,16 +11,20 @@ import '../utils/global-utils.dart' as global;
 /// implemented in this beta version.
 /// It's on the TODO list.
 class SettingsPage extends StatefulWidget {
-  SettingsPage({Key key, this.title}) : super(key: key);
+  SettingsPage({Key key, this.title, this.disableRecord}) : super(key: key);
 
   final String title;
+  final Function disableRecord;
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  _SettingsPageState createState() => _SettingsPageState(disableRecord);
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  Function setDisableRecord;
+
+  _SettingsPageState(this.setDisableRecord);
 
   @override
   Widget build(BuildContext context) {
@@ -115,13 +119,11 @@ class _SettingsPageState extends State<SettingsPage> {
         PreferenceTitle('General settings'),
         CheckboxPreference(
           'Disable the record button',
-          'record_disable',
-          disabled: true,
+          'disable_record',
+          disabled: false,
+          defaultVal: false,
           onChange: () {
-            setState(() {});
-          },
-          onDisable: () {
-            PrefService.setBool('exp_showos', false);
+              setDisableRecord(PrefService.getBool("disable_record"));
           },
         ),
         DropdownPreference(

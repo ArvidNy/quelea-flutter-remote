@@ -73,6 +73,12 @@ class _MainState extends State<MainPage> {
     }
   }
 
+  void _setDisableRecord(bool disable) {
+    setState(() {
+      global.disableRecord = disable;
+    });
+  }
+
   void _setLiveItem(LiveItem liveItem) async {
     if (this._liveItem.titleText != liveItem.titleText ||
         this._liveItem.activeSlide != liveItem.activeSlide ||
@@ -109,7 +115,7 @@ class _MainState extends State<MainPage> {
       DownloadHandler().testConnection(global.url, context);
     global.syncHandler.setFunctions(_setLiveItem, _setSchedule, _setStatus);
     return Scaffold(
-      drawer: ScheduleDrawer(_scheduleItems.getList()),
+      drawer: ScheduleDrawer(_scheduleItems.getList(), _setDisableRecord),
       drawerScrimColor: Colors.black54,
       appBar: AppBar(
         title: Text(
@@ -150,7 +156,7 @@ class _MainState extends State<MainPage> {
         },
         tooltip: "Search for a song or a Bible passage",
       ),
-      IconButton(
+      global.disableRecord ? Container() : IconButton(
         icon: _isRecord
             ? Icon(Icons.mic, color: Colors.red[300])
             : Icon(Icons.mic, color: Colors.white),
