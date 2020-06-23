@@ -19,7 +19,7 @@ import './objects/schedule-list.dart';
 import './widgets/schedule-item.dart';
 
 class MainPage extends StatefulWidget {
-StreamController<bool> _isLightTheme;
+  StreamController<bool> _isLightTheme;
   MainPage(this._isLightTheme);
 
   @override
@@ -101,12 +101,19 @@ class _MainState extends State<MainPage> {
         setState(() {
           this._liveItem = LiveItem("");
           PaintingBinding.instance.imageCache.clear();
-          Future.delayed(Duration(milliseconds: 1000))
-              .then((value) => this._liveItem = liveItem);
+          Future.delayed(Duration(milliseconds: 1000)).then((value) {
+            this._liveItem = liveItem;
+            _itemScrollController.scrollTo(
+                index: liveItem.activeSlide,
+                duration: Duration(milliseconds: 100));
+          });
         });
       } else {
         setState(() {
           this._liveItem = liveItem;
+          _itemScrollController.scrollTo(
+              index: liveItem.activeSlide,
+              duration: Duration(milliseconds: 100));
         });
       }
     }
@@ -212,8 +219,7 @@ class _MainState extends State<MainPage> {
         swipeDirection = DismissDirection.horizontal;
       }
     } else {
-      if (_liveItem.activeSlide ==
-          _liveItem.lyrics.length - 1) {
+      if (_liveItem.activeSlide == _liveItem.lyrics.length - 1) {
         swipeDirection = DismissDirection.startToEnd;
       } else if (_liveItem.activeSlide == 0) {
         swipeDirection = DismissDirection.endToStart;

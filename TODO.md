@@ -42,7 +42,7 @@ No known bugs
     - [x] Reporting a bug/suggesting a feature
     - [ ] Help translating
     - [x] Donate link
-- [ ] Scroll to current slide
+- [x] Scroll to current slide
 - [ ] Removing items from the schedule
 - [ ] Moving items in the schedule
 - [ ] Global theme select

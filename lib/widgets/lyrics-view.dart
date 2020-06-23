@@ -20,7 +20,8 @@ class LyricsView extends StatelessWidget {
       children: <Widget>[
         Text(liveItem.titleText),
         Expanded(
-          child: ListView.builder(
+          child: ScrollablePositionedList.builder(
+            itemScrollController: scrollController,
             itemCount: liveItem.lyrics.length,
             itemBuilder: (context, index) {
               return InkWell(
