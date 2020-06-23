@@ -39,9 +39,9 @@ No known bugs
     - [ ] Dark theme
     - [x] Disable the recording button
     - [x] About page
-    - [ ] Reporting a bug/suggesting a feature
+    - [x] Reporting a bug/suggesting a feature
     - [ ] Help translating
-    - [ ] Donate link
+    - [x] Donate link
 - [ ] Scroll to current slide
 - [ ] Removing items from the schedule
 - [ ] Moving items in the schedule

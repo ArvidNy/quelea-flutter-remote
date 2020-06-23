@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../handlers/download-handler.dart';
 import '../utils/global-utils.dart' as global;
@@ -95,24 +96,17 @@ class _SettingsPageState extends State<SettingsPage> {
           'swipe_navigation_action',
           defaultVal: 'off',
           values: ['off', 'slide', 'item'],
-          displayValues: ['Do nothing', 'Next/previous slide', 'Next/previous item'],
+          displayValues: [
+            'Do nothing',
+            'Next/previous slide',
+            'Next/previous item'
+          ],
           disabled: false,
           onChange: (change) {
             settingsFunctions['swipe'](
-              !PrefService.getString("swipe_navigation_action")
-                  .contains("off"));
-                  print(PrefService.getString("swipe_navigation_action"));
-                  },
-        ),
-        CheckboxPreference(
-          'Use d-pad navigation',
-          'dpad_navigation_use',
-          disabled: true,
-          onChange: () {
-            setState(() {});
-          },
-          onDisable: () {
-            PrefService.setBool('exp_showos', false);
+                !PrefService.getString("swipe_navigation_action")
+                    .contains("off"));
+            print(PrefService.getString("swipe_navigation_action"));
           },
         ),
         PreferenceHider([
@@ -152,7 +146,13 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             PreferenceText(
               "Contact the developer",
-              onTap: () => null,
+              onTap: () => _launchURL(
+                  "https://quelea.discourse.group/"),
+            ),
+            PreferenceText(
+              "Report an issue",
+              onTap: () => _launchURL(
+                  "https://github.com/arvidny/quelea-flutter-remote/issues"),
             ),
             PreferenceText(
               "How to translate the app",
@@ -160,7 +160,11 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             PreferenceText(
               "Privacy policy",
-              onTap: () => null,
+              onTap: () => _launchURL("https://quelea-projection.github.io/docs/Android_Applications_Privacy_Policy"),
+            ),
+            PreferenceText(
+              "Donate",
+              onTap: () => _launchURL("https://paypal.me/ArvidNy"),
             ),
           ]),
         ),
@@ -185,5 +189,13 @@ class _SettingsPageState extends State<SettingsPage> {
           Text(
               "I cannot guarantee a flawless experience, so I will not take responsibility for any issues that could occur in a live setting.")
         ]);
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
