@@ -1,7 +1,7 @@
 # List of features to implement and bugs left to sort out
 
 ## Bugs
-No known bugs
+- [ ] The dialog sometimes appears even though the server URL automatically has been found
 
 ## Features
 - [x] Connecting to a server
@@ -31,7 +31,7 @@ No known bugs
 - [x] Exit from dialog (Android)
 - [x] App icons
 - [x] Settings page
-    - [ ] Auto-connect
+    - [x] Auto-connect
     - [x] Swipe navigation
     - [ ] Volume navigation
     - [ ] Dpad navigation

@@ -31,36 +31,42 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
       barrierDismissible: false,
       builder: (context) {
         return WillPopScope(
-           onWillPop: () {
-              return Future.value(false);
-            },
-            child: AlertDialog(
-              title: Text(message),
-              actions: <Widget>[
-                // Exit is not allowed for iOS apps
-                Platform.isAndroid
-                    ? FlatButton(
-                        child: Text("Exit"),
-                        onPressed: () {
-                          SystemChannels.platform
-                              .invokeMethod('SystemNavigator.pop');
-                        },
-                      )
-                    : Column(),
-                FlatButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    if (isPassword) {
-                      _sendPassword(input);
-                    } else {
-                      DownloadHandler().testConnection(input, global.context);
-                    }
-                  },
-                ),
-              ],
-              content: textField,
-            ),
-           );
+          onWillPop: () {
+            return Future.value(false);
+          },
+          child: AlertDialog(
+            title: Text(message),
+            actions: <Widget>[
+              // Exit is not allowed for iOS apps
+              Platform.isAndroid
+                  ? FlatButton(
+                      child: Text("Exit"),
+                      onPressed: () {
+                        SystemChannels.platform
+                            .invokeMethod('SystemNavigator.pop');
+                      },
+                    )
+                  : Column(),
+              isPassword  ? Container() : FlatButton(
+                child: Text("Search server"),
+                onPressed: () {
+                  DownloadHandler().autoConnect(global.context);
+                },
+              ),
+              FlatButton(
+                child: Text("OK"),
+                onPressed: () {
+                  if (isPassword) {
+                    _sendPassword(input);
+                  } else {
+                    DownloadHandler().testConnection(input, global.context);
+                  }
+                },
+              ),
+            ],
+            content: textField,
+          ),
+        );
       });
 }
 

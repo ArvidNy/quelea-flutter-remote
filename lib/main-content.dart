@@ -135,8 +135,13 @@ class _MainState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     global.context = context;
-    if (!global.syncHandler.isConnected)
-      DownloadHandler().testConnection(global.url, context);
+    if (!global.syncHandler.isConnected) {
+      if (PrefService.getBool("use_autoconnect") ?? false) {
+        DownloadHandler().autoConnect(context);
+      } else {
+        DownloadHandler().testConnection(global.url, context);
+      }
+    }
     global.syncHandler.setFunctions(_setLiveItem, _setSchedule, _setStatus);
     Map<String, Function> settingsStateFunctions = <String, Function>{
       'record': _setDisableRecord,

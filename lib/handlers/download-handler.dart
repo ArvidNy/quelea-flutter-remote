@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:ping_discover_network/ping_discover_network.dart';
 import 'package:preferences/preference_service.dart';
 
 import '../dialogs/login-dialog.dart';
@@ -119,14 +121,12 @@ class DownloadHandler {
           if (onValue["data"].toString().contains("password")) {
             showInputDialog(context, "Enter the server password", true);
           } else if (onValue["data"].toString().contains("logobutton")) {
-            global.syncHandler.start();
-            global.scaffoldKey.currentState.showSnackBar(
-              SnackBar(
-                duration: Duration(seconds: 3),
-                content: Text("Connected!"),
-              ),
-            );
+            Scaffold.of(context).showSnackBar(SnackBar(
+              duration: Duration(seconds: 3),
+              content: Text("Connected!"),
+            ));
             PrefService.setString("server_url", url);
+            global.syncHandler.start();
           } else {
             showInputDialog(
                 context, "The wrong page content was found. Try again.", false);
@@ -152,10 +152,29 @@ class DownloadHandler {
     });
   }
 
+  void autoConnect(BuildContext context) async {
+    if (await (Connectivity().checkConnectivity()) == ConnectivityResult.wifi) {
+      var wifiIP = await (Connectivity().getWifiIP());
+      final stream = NetworkAnalyzer.discover2(
+          wifiIP.substring(0, wifiIP.lastIndexOf(".")), 50015);
+      stream.listen((NetworkAddress addr) {
+        if (addr.exists) {
+          DownloadHandler().download("http://${addr.ip}:50015", (html) {
+            String remoteUrl = html.toString().split("\n")[1];
+            testConnection(remoteUrl, context);
+          });
+        }
+      });
+    } else {
+      showInputDialog(context, "You are not connected to a wifi. Please set the URL manually or connect to a wifi.", false);
+    }
+  }
+
   Future _testConnection(String urlString) async {
+    print("test $urlString");
     var url = Uri.parse(urlString);
     var httpClient = HttpClient();
-    httpClient.connectionTimeout = Duration(seconds: 3);
+    httpClient.connectionTimeout = Duration(milliseconds: 3000);
     var request = await httpClient.getUrl(url);
     var response = await request.close();
     var data = await utf8.decoder.bind(response).toList();

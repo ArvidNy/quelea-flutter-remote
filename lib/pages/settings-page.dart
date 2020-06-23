@@ -52,14 +52,9 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         CheckboxPreference(
           'Automatically try to find the server URL',
-          'autoconnect_use',
-          disabled: true,
-          onChange: () {
-            setState(() {});
-          },
-          onDisable: () {
-            PrefService.setBool('exp_showos', false);
-          },
+          'use_autoconnect',
+          defaultVal: true,
+          disabled: false,
         ),
         DropdownPreference(
           'Timeout length for auto-connect',
@@ -134,8 +129,8 @@ class _SettingsPageState extends State<SettingsPage> {
           values: ['light', 'dark'],
           displayValues: ['Light', 'Dark'],
           disabled: false,
-          onChange: settingsFunctions['theme'](
-              PrefService.getString("app_theme").contains("light")),
+          onChange: () => settingsFunctions['theme'](
+              (PrefService.getString("app_theme") ?? "light").contains("light")),
         ),
         PreferenceTitle('Information'),
         PreferencePageLink(
