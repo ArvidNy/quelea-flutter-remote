@@ -130,9 +130,12 @@ class _SettingsPageState extends State<SettingsPage> {
         DropdownPreference(
           'Application theme',
           'app_theme',
-          defaultVal: 'Light',
-          values: ['Light', 'Dark'],
-          disabled: true,
+          defaultVal: 'light',
+          values: ['light', 'dark'],
+          displayValues: ['Light', 'Dark'],
+          disabled: false,
+          onChange: settingsFunctions['theme'](
+              PrefService.getString("app_theme").contains("light")),
         ),
         PreferenceTitle('Information'),
         PreferencePageLink(
@@ -146,8 +149,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             PreferenceText(
               "Contact the developer",
-              onTap: () => _launchURL(
-                  "https://quelea.discourse.group/"),
+              onTap: () => _launchURL("https://quelea.discourse.group/"),
             ),
             PreferenceText(
               "Report an issue",
@@ -160,7 +162,8 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             PreferenceText(
               "Privacy policy",
-              onTap: () => _launchURL("https://quelea-projection.github.io/docs/Android_Applications_Privacy_Policy"),
+              onTap: () => _launchURL(
+                  "https://quelea-projection.github.io/docs/Android_Applications_Privacy_Policy"),
             ),
             PreferenceText(
               "Donate",

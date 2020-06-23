@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 
@@ -10,23 +12,32 @@ void main() async {
   runApp(QueleaMobileRemote());
 }
 
+StreamController<bool> isLightTheme = StreamController();
+
 class QueleaMobileRemote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     setGlobals(context);
-    return MaterialApp(
-      title: 'Quelea Mobile Remote',
-      theme: ThemeData(
-        primaryColor: Colors.black,
-        primaryTextTheme: TextTheme(
-          headline5: TextStyle(color: Colors.white),
-        ),
-      ),
-      home: Scaffold(
-        key: global.scaffoldKey,
-        body: MainPage(),
-      ),
-    );
+    return StreamBuilder<bool>(
+        initialData: true,
+        stream: isLightTheme.stream,
+        builder: (context, snapshot) {
+          return MaterialApp(
+            title: 'Quelea Mobile Remote',
+            theme: ThemeData(
+              brightness: (PrefService.getString("app_theme") ?? "light")
+                      .contains("light")
+                  ? Brightness.light
+                  : Brightness.dark,
+              primaryColor: Colors.black,
+              accentColor: Colors.grey[600],
+            ),
+            home: Scaffold(
+              key: global.scaffoldKey,
+              body: MainPage(isLightTheme),
+            ),
+          );
+        });
   }
 
   /// Set global variables that might be needed from different classes.

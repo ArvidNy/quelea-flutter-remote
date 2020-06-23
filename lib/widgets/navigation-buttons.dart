@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:preferences/preferences.dart';
 
 import '../handlers/download-handler.dart';
 import '../utils/global-utils.dart';
@@ -34,6 +35,7 @@ class NavigationButtons extends StatelessWidget {
   }
 
   _itemButton(void Function() clickFunction, String imagePath) {
+    bool isLightTheme = (PrefService.getString("app_theme") ?? "light").contains("light");
     return Container(
       width: 52,
       height: MediaQuery.of(context).size.height * 0.1,
@@ -41,14 +43,15 @@ class NavigationButtons extends StatelessWidget {
           onPressed: clickFunction,
           elevation: 10,
           shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.black12, width: 1),
+              side: BorderSide(color: isLightTheme ? Colors.black12 : Colors.white, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(22))),
-          color: Colors.grey.shade300,
+          color: isLightTheme ? Colors.grey.shade300 : Colors.grey[800],
           child: Image.asset(imagePath)),
     );
   }
 
   _slideButton(void Function() clickFunction, String imagePath) {
+    bool isLightTheme = (PrefService.getString("app_theme") ?? "light").contains("light");
     return Expanded(
         child: Container(
       width: 52,
@@ -56,9 +59,9 @@ class NavigationButtons extends StatelessWidget {
           onPressed: clickFunction,
           elevation: 10,
           shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.black12, width: 1),
+              side: BorderSide(color: isLightTheme ? Colors.black12 : Colors.white, width: 1),
               borderRadius: BorderRadius.all(Radius.circular(22))),
-          color: Colors.grey.shade300,
+          color: isLightTheme ? Colors.grey.shade300 : Colors.grey[800],
           child: Image.asset(imagePath)),
     ));
   }

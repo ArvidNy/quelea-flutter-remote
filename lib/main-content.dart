@@ -19,9 +19,12 @@ import './objects/schedule-list.dart';
 import './widgets/schedule-item.dart';
 
 class MainPage extends StatefulWidget {
+StreamController<bool> _isLightTheme;
+  MainPage(this._isLightTheme);
+
   @override
   _MainState createState() {
-    return _MainState();
+    return _MainState(_isLightTheme);
   }
 }
 
@@ -33,10 +36,13 @@ class _MainState extends State<MainPage> {
   bool _isRecord = false;
   LiveItem _liveItem = LiveItem("");
   final ItemScrollController _itemScrollController = ItemScrollController();
+  StreamController<bool> _isLightTheme;
 
   bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
       .contains("off");
   bool _disableRecord = PrefService.getBool("disable_record") ?? false;
+
+  _MainState(this._isLightTheme);
 
   void _setRecord(bool isRecord) {
     if (this._isRecord != isRecord) {
@@ -127,7 +133,8 @@ class _MainState extends State<MainPage> {
     global.syncHandler.setFunctions(_setLiveItem, _setSchedule, _setStatus);
     Map<String, Function> settingsStateFunctions = <String, Function>{
       'record': _setDisableRecord,
-      'swipe': _setSwipe
+      'swipe': _setSwipe,
+      'theme': (b) => _isLightTheme.add(b),
     };
     return Scaffold(
       drawer: ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),

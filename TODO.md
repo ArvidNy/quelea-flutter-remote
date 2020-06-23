@@ -36,7 +36,7 @@ No known bugs
     - [ ] Volume navigation
     - [ ] Dpad navigation
     - [ ] Timeout length
-    - [ ] Dark theme
+    - [x] Dark theme
     - [x] Disable the recording button
     - [x] About page
     - [x] Reporting a bug/suggesting a feature

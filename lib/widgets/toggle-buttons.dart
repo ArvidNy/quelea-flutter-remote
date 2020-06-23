@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:preferences/preferences.dart';
 
 import '../handlers/download-handler.dart';
 import '../utils/global-utils.dart';
@@ -38,7 +39,9 @@ class ToggleHideButtons extends StatelessWidget {
       Color color = Colors.transparent,
       bool isPressed,
       String btnUrl}) {
-    print(MediaQuery.of(context).size.aspectRatio);
+        bool isLightTheme = (PrefService.getString("app_theme") ?? "light").contains("light");
+        Color pressedColor = isLightTheme ? Colors.grey.shade800 : Colors.greenAccent[700];
+        Color normalColor = isLightTheme ? Colors.grey.shade200 : Colors.grey.shade600;
     return Container(
       width: _itemWidth,
       height: _itemWidth,
@@ -47,7 +50,7 @@ class ToggleHideButtons extends StatelessWidget {
         padding: EdgeInsets.all(8.0),
         onPressed: () => DownloadHandler().download(url + "/$btnUrl", () => {}),
         shape: CircleBorder(),
-        color: isPressed ? Colors.grey.shade800 : Colors.grey.shade200,
+        color: isPressed ? pressedColor : normalColor,
         child: Container(
           decoration: new BoxDecoration(
             color: color,
