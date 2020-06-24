@@ -67,9 +67,7 @@ class DownloadHandler {
         urlString.contains("books")) {
       update(data.join());
     } else if (urlString.contains("getthemes")) {
-      for (String s in data.join().split("\n")) {
-        if (s.isNotEmpty) print("line: " + s); // TODO: Show results
-      }
+      update(data.join());
     } else if (urlString.contains("song")) {
       update(parser.getText(data.join(), ["a"]));
     } else if (urlString.contains("addbible")) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../dialogs/theme-dialog.dart';
 import '../handlers/download-handler.dart';
 import '../pages/settings-page.dart';
 import '../utils/global-utils.dart' as global;
@@ -43,11 +44,14 @@ class ScheduleDrawer extends StatelessWidget {
                                         color: Colors.white, fontSize: 18)),
                               ),
                               IconButton(
+                                tooltip: "Set a global theme",
                                 icon: Icon(
                                   Icons.color_lens,
                                   color: Colors.white,
                                 ),
-                                onPressed: global.notImplementedSnackbar,
+                                onPressed: () => DownloadHandler().download("${global.url}/getthemes", (themes){
+                                  showThemesDialog(context, themes.toString().split("\n"));
+                                }),
                               ),
                             ],
                           ),
