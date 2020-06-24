@@ -2,6 +2,7 @@
 
 ## Bugs
 - [ ] The dialog sometimes appears even though the server URL automatically has been found
+- [ ] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
 
 ## Features
 - [x] Connecting to a server
@@ -43,8 +44,8 @@
     - [ ] Help translating
     - [x] Donate link
 - [x] Scroll to current slide
-- [ ] Removing items from the schedule
-- [ ] Moving items in the schedule
+- [x] Removing items from the schedule
+- [x] Moving items in the schedule
 - [ ] Global theme select
 - [ ] Notice quick add
 - [ ] Troubleshooting guide
