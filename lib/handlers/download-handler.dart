@@ -127,6 +127,13 @@ class DownloadHandler {
             ));
             PrefService.setString("server_url", url);
             global.syncHandler.start();
+            download("$url/serverversion", (response) {
+              if (response.toString().contains("apple-mobile-web-app-capable")) {
+                global.serverVersion = 2020.0;
+              } else {
+                global.serverVersion = double.parse(response.toString());
+              }
+            });
           } else {
             showInputDialog(
                 context, "The wrong page content was found. Try again.", false);

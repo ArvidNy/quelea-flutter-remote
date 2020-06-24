@@ -5,6 +5,7 @@ import 'package:preferences/preferences.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import './dialogs/bible-dialog.dart';
+import './dialogs/notice-dialog.dart';
 import './dialogs/search-type-dialog.dart';
 import './handlers/download-handler.dart';
 import './handlers/search-delegate.dart';
@@ -204,11 +205,13 @@ class _MainState extends State<MainPage> {
                   DownloadHandler().download(global.url + "/record", () => {}),
               tooltip: "Start/stop recording",
             ),
-      IconButton(
+      global.serverVersion >= 2020.1 ? IconButton(
         icon: Icon(Icons.warning),
-        onPressed: () => global.notImplementedSnackbar(),
+        onPressed: () => global.serverVersion < 2020.1
+            ? global.needsNewerServerSnackbar(2020.1)
+            : showAddNoticeDialog(context),
         tooltip: "Add a notice",
-      ),
+      ) : Container(),
     ];
   }
 

@@ -47,7 +47,7 @@
 - [x] Removing items from the schedule
 - [x] Moving items in the schedule
 - [ ] Global theme select
-- [ ] Notice quick add
+- [x] Notice quick add (future feature in Quelea 2020.1)
 - [ ] Troubleshooting guide
 - [ ] Multiple language support
 - [ ] Search help
