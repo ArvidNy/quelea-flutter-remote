@@ -54,7 +54,7 @@
 - [ ] Troubleshooting guide
 - [x] Multiple language support
 - [ ] Search help
-- [ ] Section titles
+- [x] Section titles
 - [ ] Keyboard shortcuts
 - [ ] Message if sending a signal failed
 - [ ] Bible add and go live
