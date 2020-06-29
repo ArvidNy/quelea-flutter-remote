@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 /// A class that returns a widget for the items
@@ -49,16 +50,16 @@ class ScheduleItem extends StatelessWidget {
               width: double.maxFinite,
               child: Column(
                 children: <Widget>[
-                  Text("Choose action for $title:",
+                  Text(AppLocalizations.of(context).getText("remote.choose.action").replaceFirst("\$1", title),
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ListView(
                     padding: EdgeInsets.only(top: 10),
                     shrinkWrap: true,
                     children: <Widget>[
-                      _getInkWell("Remove from the schedule", "remove"),
-                      _getInkWell("Move up", "moveup"),
-                      _getInkWell("Move down", "movedown"),
+                      _getInkWell(AppLocalizations.of(context).getText("remove.song.schedule.tooltip"), "remove"),
+                      _getInkWell(AppLocalizations.of(context).getText("move.up.schedule.tooltip"), "moveup"),
+                      _getInkWell(AppLocalizations.of(context).getText("move.down.schedule.tooltip"), "movedown"),
                     ],
                   )
                 ],

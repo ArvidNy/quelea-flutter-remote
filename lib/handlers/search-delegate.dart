@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../dialogs/search-item-dialog.dart';
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../objects/search-item.dart';
 import '../utils/global-utils.dart' as global;
 
@@ -17,7 +18,7 @@ class SongSearchDelegate extends SearchDelegate<String> {
     print(_filterName.length);
     return <Widget>[
       IconButton(
-        tooltip: 'Clear',
+        tooltip: AppLocalizations.of(global.context).getText("clear.search.box"),
         icon: const Icon((Icons.clear)),
         onPressed: () {
           query = '';
@@ -25,7 +26,7 @@ class SongSearchDelegate extends SearchDelegate<String> {
         },
       ),
       IconButton(
-        tooltip: 'Help',
+        tooltip: AppLocalizations.of(global.context).getText("help.menu"),
         icon: const Icon((Icons.help)),
         onPressed: () {
           // TODO: Add help

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:org.quelea.mobileremote/handlers/download-handler.dart';
 
+import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 showThemesDialog(BuildContext context, List<String> themes) {
@@ -11,7 +12,7 @@ showThemesDialog(BuildContext context, List<String> themes) {
         FlatButton(
             onPressed: () =>
                 Navigator.canPop(context) ? Navigator.pop(context) : null,
-            child: Text("Cancel")),
+            child: Text(AppLocalizations.of(context).getText("cancel.button"))),
       ],
       content: Container(
         width: double.maxFinite,
@@ -28,7 +29,7 @@ showThemesDialog(BuildContext context, List<String> themes) {
                         Scaffold.of(global.context).showSnackBar(
                           SnackBar(
                             content: Text(
-                                "${themes[index]} was set as the global theme"),
+                                AppLocalizations.of(context).getText("remote.theme.was.set").replaceFirst("\$1", themes[index])),
                           ),
                         );
                       });

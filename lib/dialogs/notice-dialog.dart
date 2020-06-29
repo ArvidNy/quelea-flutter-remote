@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:org.quelea.mobileremote/handlers/download-handler.dart';
 
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 void showAddNoticeDialog(BuildContext context) {
@@ -13,16 +14,16 @@ void showAddNoticeDialog(BuildContext context) {
   showDialog(
       context: context,
       child: AlertDialog(
-        title: Text("Write a text to add as a notice"),
+        title: Text(AppLocalizations.of(context).getText("new.notice.text")),
         content: textField,
         actions: <Widget>[
           FlatButton(
             onPressed: () => Navigator.canPop(global.context)
                 ? Navigator.pop(global.context)
                 : null,
-            child: Text("Cancel"),
+            child: Text(AppLocalizations.of(context).getText("cancel.button")),
           ),
-          FlatButton(onPressed: () => addNotice(message), child: Text("OK")),
+          FlatButton(onPressed: () => addNotice(message), child: Text(AppLocalizations.of(context).getText("ok.button"))),
         ],
       ));
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 /// Opens a dialog for selecting:
@@ -12,18 +13,18 @@ Function bibleSearchFunction(BuildContext context) {
     return () => DownloadHandler().download(global.url + "/translations",
             (translations) {
           _showBibleDialog(
-              context, "Select translation", translations.split("\n"),
+              context, AppLocalizations.of(context).getText("select.language"), translations.split("\n"),
               (translation) {
             DownloadHandler().download(global.url + "/books/$translation",
                 (books) {
-              _showBibleDialog(context, "Select book", books.split("\n"),
+              _showBibleDialog(context, AppLocalizations.of(context).getText("remote.select.book"), books.split("\n"),
                   (book) {
                 int bookNum = 0;
                 for (String s in books.split("\n")) {
                   bookNum++;
                   if (s.contains(book)) break;
                 }
-                _showBibleChapterDialog(context, "Select chapter and verses",
+                _showBibleChapterDialog(context, AppLocalizations.of(context).getText("remote.select.chapter.verses"),
                     bookNum, translation, book);
               });
             });
@@ -41,7 +42,7 @@ void _showBibleDialog(
           title: Text(title),
           actions: <Widget>[
             FlatButton(
-              child: Text("Cancel"),
+              child: Text(AppLocalizations.of(context).getText("cancel.button")),
               onPressed: () {
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
@@ -93,7 +94,7 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
           title: Text(title),
           actions: <Widget>[
             FlatButton(
-              child: Text("Cancel"),
+              child: Text(AppLocalizations.of(context).getText("cancel.button")),
               onPressed: () {
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
@@ -101,7 +102,7 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
               },
             ),
             FlatButton(
-                child: Text("OK"),
+                child: Text(AppLocalizations.of(context).getText("ok.button")),
                 onPressed: () {
                   if (Navigator.canPop(context)) {
                     Navigator.pop(context);

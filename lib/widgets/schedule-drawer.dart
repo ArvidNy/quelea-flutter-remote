@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../dialogs/theme-dialog.dart';
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../pages/settings-page.dart';
 import '../utils/global-utils.dart' as global;
 import '../widgets/schedule-item.dart';
@@ -21,7 +22,7 @@ class ScheduleDrawer extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Icon(Icons.exit_to_app),
-          Text("Logout"),
+          Text(AppLocalizations.of(context).getText("remote.logout.text")),
         ],
       ),
     );
@@ -39,12 +40,12 @@ class ScheduleDrawer extends StatelessWidget {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text('Schedule',
+                                child: Text(AppLocalizations.of(context).getText("schedule.menu"),
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 18)),
                               ),
                               IconButton(
-                                tooltip: "Set a global theme",
+                                tooltip: AppLocalizations.of(context).getText("remote.select.theme"),
                                 icon: Icon(
                                   Icons.color_lens,
                                   color: Colors.white,
@@ -85,7 +86,7 @@ class ScheduleDrawer extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Icon(Icons.settings),
-                    Text("Settings"),
+                    Text(AppLocalizations.of(context).getText("options.title")),
                   ],
                 ),
               ),
@@ -99,7 +100,6 @@ class ScheduleDrawer extends StatelessWidget {
   }
 
   void _logout(BuildContext context) {
-    print("logout");
     global.syncHandler.stop();
     DownloadHandler().download(global.url + "/logout", (res) {
       DownloadHandler().testConnection(global.url, context);
@@ -111,7 +111,7 @@ class ScheduleDrawer extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => SettingsPage(
-          title: "Settings",
+          title: AppLocalizations.of(context).getText("options.title"),
           settingsFunctions: _settingsFunctions,
         ),
       ),

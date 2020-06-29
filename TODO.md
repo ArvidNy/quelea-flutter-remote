@@ -41,15 +41,18 @@
     - [x] Disable the recording button
     - [x] About page
     - [x] Reporting a bug/suggesting a feature
-    - [ ] Help translating
+    - [x] Help translating
     - [x] Donate link
+    - [x] Facebook link
+    - [x] Source code link
+    - [x] Website link
 - [x] Scroll to current slide
 - [x] Removing items from the schedule
 - [x] Moving items in the schedule
 - [x] Global theme select
 - [x] Notice quick add (future feature in Quelea 2020.1)
 - [ ] Troubleshooting guide
-- [ ] Multiple language support
+- [x] Multiple language support
 - [ ] Search help
 - [ ] Section titles
 - [ ] Keyboard shortcuts

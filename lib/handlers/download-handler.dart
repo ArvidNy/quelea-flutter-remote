@@ -12,6 +12,7 @@ import '../objects/search-item.dart';
 import '../utils/global-utils.dart' as global;
 import '../utils/html-parser.dart' as parser;
 import '../widgets/live-item.dart';
+import './language-delegate.dart';
 
 /// A class for handeling all network signals and receiving data.
 class DownloadHandler {
@@ -46,7 +47,7 @@ class DownloadHandler {
       if (connectionFailed > 5) {
         if (!Navigator.canPop(global.context)) {
           showInputDialog(
-              global.context, "The connection failed, try again.", false);
+              global.context, AppLocalizations.of(global.context).getText("remote.failed.finding.server"), false);
         }
         global.syncHandler.stop();
       }
@@ -105,7 +106,7 @@ class DownloadHandler {
     if (!url.replaceFirst("://", "").contains(":")) {
       SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
           context,
-          "The URL must contain the port number at the end (e.g. ':1112'). Try again.",
+          AppLocalizations.of(global.context).getText("remote.port.needed"),
           false));
     } else {
       SchedulerBinding.instance
@@ -117,11 +118,11 @@ class DownloadHandler {
         if (onValue["code"] == 200) {
           global.syncHandler.isConnected = true;
           if (onValue["data"].toString().contains("password")) {
-            showInputDialog(context, "Enter the server password", true);
+            showInputDialog(context, AppLocalizations.of(global.context).getText("remote.control.password"), true);
           } else if (onValue["data"].toString().contains("logobutton")) {
             Scaffold.of(context).showSnackBar(SnackBar(
               duration: Duration(seconds: 3),
-              content: Text("Connected!"),
+              content: Text(AppLocalizations.of(global.context).getText("remote.connected")),
             ));
             PrefService.setString("server_url", url);
             global.syncHandler.start();
@@ -134,18 +135,18 @@ class DownloadHandler {
             });
           } else {
             showInputDialog(
-                context, "The wrong page content was found. Try again.", false);
+                context, AppLocalizations.of(global.context).getText("remote.wrong.content"), false);
           }
         } else {
           SchedulerBinding.instance.addPostFrameCallback(
               (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
-          showInputDialog(context, "The URL was not found. Try again.", false);
+          showInputDialog(context, AppLocalizations.of(global.context).getText("remote.failed.finding.server"), false);
         }
       }).catchError((onError) {
         SchedulerBinding.instance.addPostFrameCallback(
             (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
         print("Catch error: " + onError.toString());
-        showInputDialog(context, "The URL was not found. Try again.", false);
+        showInputDialog(context, AppLocalizations.of(global.context).getText("remote.failed.finding.server"), false);
       });
     }
   }
@@ -171,7 +172,7 @@ class DownloadHandler {
         }
       });
     } else {
-      showInputDialog(context, "You are not connected to a wifi. Please set the URL manually or connect to a wifi.", false);
+      showInputDialog(context, AppLocalizations.of(global.context).getText("remote.no.wifi"), false);
     }
   }
 
@@ -195,7 +196,7 @@ class DownloadHandler {
           children: <Widget>[
             CircularProgressIndicator(),
             Padding(padding: EdgeInsets.all(16)),
-            Text("Loading...")
+            Text(AppLocalizations.of(global.context).getText("loading.text") + "...")
           ],
         ),
       ),

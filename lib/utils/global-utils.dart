@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 
-import '../objects/status-item.dart';
 import '../handlers/sync-handler.dart';
+import '../handlers/language-delegate.dart';
+import '../objects/status-item.dart';
 
 // Global variables
-String url = PrefService.getString('server_url') ??
-    "http://192.168.0.1:1112";
+String url = PrefService.getString('server_url') ?? "http://192.168.0.1:1112";
 BuildContext context;
 bool debug = true;
 SyncHandler syncHandler = new SyncHandler();
@@ -14,17 +14,38 @@ final scaffoldKey = GlobalKey<ScaffoldState>();
 String chapterList;
 StatusItem statusHandler = StatusItem();
 double serverVersion = 2020.0;
+Map<String, String> lang = {};
+List<String> supportedLanguages = [
+  'en_GB',
+  'en_US',
+  'bg',
+  'chs',
+  'cs',
+  'de',
+  'es',
+  'fi',
+  'fr',
+  'hu',
+  'lt',
+  'nl',
+  'no',
+  'pj',
+  'pl',
+  'pt',
+  'pt_BR',
+  'ro',
+  'ru',
+  'sk',
+  'sv',
+  'sw'
+];
 
 // Global methods
-void notImplementedSnackbar() {
-  scaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text("This feature is not yet implemented")));
-}
-
 void needsNewerServerSnackbar(double version) {
   scaffoldKey.currentState.showSnackBar(SnackBar(
     duration: Duration(seconds: 3),
-    content:
-        Text("This feature needs the server to run Quelea $version or above"),
+    content: Text(AppLocalizations.of(context)
+        .getText("remote.needs.newer.version")
+        .replaceFirst("\$1", version.toString())),
   ));
 }

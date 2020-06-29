@@ -18,6 +18,7 @@ import './widgets/schedule-drawer.dart';
 import './widgets/toggle-buttons.dart';
 import './objects/schedule-list.dart';
 import './widgets/schedule-item.dart';
+import './handlers/language-delegate.dart';
 
 class MainPage extends StatefulWidget {
   StreamController<bool> _isLightTheme;
@@ -154,7 +155,7 @@ class _MainState extends State<MainPage> {
       drawerScrimColor: Colors.black54,
       appBar: AppBar(
         title: Text(
-          'Quelea Mobile Remote',
+          AppLocalizations.of(context).getText("remote.control.app.name"),
           style: TextStyle(color: Colors.white),
         ),
         actions: _getAppBarIcons(),
@@ -193,7 +194,7 @@ class _MainState extends State<MainPage> {
             showSearch(context: context, delegate: SongSearchDelegate());
           }, bibleSearchFunction(context));
         },
-        tooltip: "Search for a song or a Bible passage",
+        tooltip: AppLocalizations.of(context).getText("remote.search.tooltip"),
       ),
       _disableRecord
           ? Container()
@@ -203,15 +204,21 @@ class _MainState extends State<MainPage> {
                   : Icon(Icons.mic, color: Colors.white),
               onPressed: () =>
                   DownloadHandler().download(global.url + "/record", () => {}),
-              tooltip: "Start/stop recording",
+              tooltip: _isRecord
+                  ? AppLocalizations.of(context).getText("pause.record.tooltip")
+                  : AppLocalizations.of(context)
+                      .getText("record.audio.tooltip"),
             ),
-      global.serverVersion >= 2020.1 ? IconButton(
-        icon: Icon(Icons.warning),
-        onPressed: () => global.serverVersion < 2020.1
-            ? global.needsNewerServerSnackbar(2020.1)
-            : showAddNoticeDialog(context),
-        tooltip: "Add a notice",
-      ) : Container(),
+      global.serverVersion >= 2020.1
+          ? IconButton(
+              icon: Icon(Icons.warning),
+              onPressed: () => global.serverVersion < 2020.1
+                  ? global.needsNewerServerSnackbar(2020.1)
+                  : showAddNoticeDialog(context),
+              tooltip:
+                  AppLocalizations.of(context).getText("remote.send.notice.tooltip"),
+            )
+          : Container(),
     ];
   }
 

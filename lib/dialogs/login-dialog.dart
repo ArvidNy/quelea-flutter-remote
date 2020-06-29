@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 /// Shows a dialog for entering either a URL or a password
@@ -15,7 +16,7 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
     keyboardType: TextInputType.url,
     decoration: InputDecoration(
         border: OutlineInputBorder(),
-        labelText: isPassword ? "" : "e.g. http://192.168.0.1:1112"),
+        labelText: isPassword ? "" : global.url),
     onSubmitted: (text) {
       if (global.debug) print("submitted");
       if (isPassword) {
@@ -40,7 +41,7 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
               // Exit is not allowed for iOS apps
               Platform.isAndroid
                   ? FlatButton(
-                      child: Text("Exit"),
+                      child: Text(AppLocalizations.of(context).getText("exit.button")),
                       onPressed: () {
                         SystemChannels.platform
                             .invokeMethod('SystemNavigator.pop');
@@ -48,13 +49,13 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
                     )
                   : Column(),
               isPassword  ? Container() : FlatButton(
-                child: Text("Search server"),
+                child: Text(AppLocalizations.of(context).getText("remote.search.server")),
                 onPressed: () {
                   DownloadHandler().autoConnect(global.context);
                 },
               ),
               FlatButton(
-                child: Text("OK"),
+                child: Text(AppLocalizations.of(context).getText("ok.button")),
                 onPressed: () {
                   if (isPassword) {
                     _sendPassword(input);

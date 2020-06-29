@@ -12,6 +12,31 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>Quelea Mobile Remote</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en_US</string>
+		<string>en_GB</string>
+		<string>bg</string>
+		<string>chs</string>
+		<string>cs</string>
+		<string>de</string>
+		<string>es</string>
+		<string>fi</string>
+		<string>fr</string>
+		<string>hu</string>
+		<string>lt</string>
+		<string>nl</string>
+		<string>no</string>
+		<string>pj</string>
+		<string>pl</string>
+		<string>pt</string>
+		<string>pt_BR</string>
+		<string>ro</string>
+		<string>ru</string>
+		<string>sk</string>
+		<string>sv</string>
+		<string>sw</string>
+	</array>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

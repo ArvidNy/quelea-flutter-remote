@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 /// Shows a dialog for previewing a song item and adding it to the schedule
@@ -13,7 +14,7 @@ void showAddSearchItemDialog(BuildContext context, String title, String lyrics,
           title: Text(title),
           actions: <Widget>[
             FlatButton(
-              child: Text("Cancel"),
+              child: Text(AppLocalizations.of(context).getText("cancel.button")),
               onPressed: () {
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
@@ -21,7 +22,7 @@ void showAddSearchItemDialog(BuildContext context, String title, String lyrics,
               },
             ),
             FlatButton(
-              child: Text("Add and go live"),
+              child: Text(AppLocalizations.of(context).getText("remote.add.go.live")),
               onPressed: () {
                 DownloadHandler().download(
                     global.url + "/add/$id",

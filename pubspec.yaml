@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   html: ^0.14.0+2
   scrollable_positioned_list: ^0.1.6
   preferences: ^5.2.0
@@ -17,7 +19,6 @@ dependencies:
   url_launcher: ^5.4.11
   connectivity: ^0.4.8+6
   #hardware_buttons: ^1.0.0
-  intl: ^0.16.1
   ping_discover_network: ^0.2.0+1
 
 dev_dependencies:
@@ -41,6 +42,28 @@ flutter:
     - images/ic_launcher_web.png
     - images/ic_launcher.png
     - assets/chapter_lengths.txt
+    - translations/en_GB.lang
+    - translations/en_US.lang
+    - translations/bg.lang
+    - translations/chs.lang
+    - translations/cs.lang
+    - translations/de.lang
+    - translations/es.lang
+    - translations/fi.lang
+    - translations/fr.lang
+    - translations/hu.lang
+    - translations/lt.lang
+    - translations/nl.lang
+    - translations/no.lang
+    - translations/pj.lang
+    - translations/pl.lang
+    - translations/pt.lang
+    - translations/pt_BR.lang
+    - translations/ro.lang
+    - translations/ru.lang
+    - translations/sk.lang
+    - translations/sv.lang
+    - translations/sw.lang
     
 flutter_icons:
   android: "launcher_icon"
