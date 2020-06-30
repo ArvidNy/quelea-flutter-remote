@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:indexed_list_view/indexed_list_view.dart';
 import 'package:preferences/preferences.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import './dialogs/bible-dialog.dart';
 import './dialogs/exit-dialog.dart';
@@ -38,7 +38,7 @@ class _MainState extends State<MainPage> {
   bool _isClear = false;
   bool _isRecord = false;
   LiveItem _liveItem = LiveItem("");
-  final ItemScrollController _itemScrollController = ItemScrollController();
+  final _itemScrollController = IndexedScrollController();
   StreamController<bool> _isLightTheme;
 
   bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
@@ -106,21 +106,13 @@ class _MainState extends State<MainPage> {
           PaintingBinding.instance.imageCache.clear();
           Future.delayed(Duration(milliseconds: 1000)).then((value) {
             this._liveItem = liveItem;
-            if (_itemScrollController.isAttached) {
-              _itemScrollController.scrollTo(
-                  index: liveItem.activeSlide,
-                  duration: Duration(milliseconds: 100));
-            }
+              _itemScrollController.jumpToIndex(liveItem.activeSlide);
           });
         });
       } else {
         setState(() {
           this._liveItem = liveItem;
-          if (_itemScrollController.isAttached) {
-            _itemScrollController.scrollTo(
-                index: liveItem.activeSlide,
-                duration: Duration(milliseconds: 100));
-          }
+          _itemScrollController.jumpToIndex(liveItem.activeSlide);
         });
       }
     }

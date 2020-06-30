@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:indexed_list_view/indexed_list_view.dart';
 
 import '../handlers/download-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -10,27 +10,35 @@ import '../utils/global-utils.dart' as global;
 /// 2. Bible book
 /// 3. Chapter and verses
 Function bibleSearchFunction(BuildContext context) {
-    return () => DownloadHandler().download(global.url + "/translations",
-            (translations) {
-          _showBibleDialog(
-              context, AppLocalizations.of(context).getText("select.language"), translations.split("\n"),
-              (translation) {
-            DownloadHandler().download(global.url + "/books/$translation",
-                (books) {
-              _showBibleDialog(context, AppLocalizations.of(context).getText("remote.select.book"), books.split("\n"),
-                  (book) {
-                int bookNum = 0;
-                for (String s in books.split("\n")) {
-                  bookNum++;
-                  if (s.contains(book)) break;
-                }
-                _showBibleChapterDialog(context, AppLocalizations.of(context).getText("remote.select.chapter.verses"),
-                    bookNum, translation, book);
-              });
+  return () =>
+      DownloadHandler().download(global.url + "/translations", (translations) {
+        _showBibleDialog(
+            context,
+            AppLocalizations.of(context).getText("select.language"),
+            translations.split("\n"), (translation) {
+          DownloadHandler().download(global.url + "/books/$translation",
+              (books) {
+            _showBibleDialog(
+                context,
+                AppLocalizations.of(context).getText("remote.select.book"),
+                books.split("\n"), (book) {
+              int bookNum = 0;
+              for (String s in books.split("\n")) {
+                bookNum++;
+                if (s.contains(book)) break;
+              }
+              _showBibleChapterDialog(
+                  context,
+                  AppLocalizations.of(context)
+                      .getText("remote.select.chapter.verses"),
+                  bookNum,
+                  translation,
+                  book);
             });
           });
         });
-  }
+      });
+}
 
 void _showBibleDialog(
     BuildContext context, String title, List items, Function closeSearch) {
@@ -42,7 +50,8 @@ void _showBibleDialog(
           title: Text(title),
           actions: <Widget>[
             FlatButton(
-              child: Text(AppLocalizations.of(context).getText("cancel.button")),
+              child:
+                  Text(AppLocalizations.of(context).getText("cancel.button")),
               onPressed: () {
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
@@ -79,13 +88,13 @@ void _closeAndReturnItem(String item, Function ret, BuildContext context) {
   ret(item);
 }
 
-final ItemScrollController _itemScrollController = ItemScrollController();
+final _itemScrollController = IndexedScrollController(initialIndex: 0);
 
 void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
     String translation, String book) {
   int chapter = 1;
-  int verseStart = 1;
-  int verseEnd = 1;
+  int verseStart = 0;
+  int verseEnd = 0;
 
   showDialog(
       context: context,
@@ -94,7 +103,8 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
           title: Text(title),
           actions: <Widget>[
             FlatButton(
-              child: Text(AppLocalizations.of(context).getText("cancel.button")),
+              child:
+                  Text(AppLocalizations.of(context).getText("cancel.button")),
               onPressed: () {
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
@@ -102,17 +112,17 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
               },
             ),
             FlatButton(
-                child: Text(AppLocalizations.of(context).getText("remote.add.go.live")),
+                child: Text(
+                    AppLocalizations.of(context).getText("remote.add.go.live")),
                 onPressed: () {
                   if (Navigator.canPop(context)) {
                     Navigator.pop(context);
                   }
                   DownloadHandler().download(
                       global.url +
-                          "/addbible/$translation/$book/$chapter:$verseStart" +
-                          (verseEnd != verseStart ? "-$verseEnd" : ""),
+                          "/addbible/$translation/$book/" + getPassageName(chapter, verseStart, verseEnd),
                       () => DownloadHandler()
-                        .download(global.url + "/gotoitem9999", () => {}));
+                          .download(global.url + "/gotoitem9999", () => {}));
                 }),
             FlatButton(
                 child: Text(AppLocalizations.of(context).getText("ok.button")),
@@ -122,8 +132,7 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
                   }
                   DownloadHandler().download(
                       global.url +
-                          "/addbible/$translation/$book/$chapter:$verseStart" +
-                          (verseEnd != verseStart ? "-$verseEnd" : ""),
+                          "/addbible/$translation/$book/" + getPassageName(chapter, verseStart, verseEnd),
                       () => {});
                 }),
           ],
@@ -134,25 +143,27 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
                   Row(
                     children: <Widget>[
                       _getNumberListView(
-                          _getNumberListFromBibleBook("$bookNum,", true), chapter,
-                          (index) {
+                          _getNumberListFromBibleBook("$bookNum,", true),
+                          chapter, (index) {
                         setState(() {
                           chapter = index + 1;
                         });
                       }, false),
                       _getNumberListView(
-                          _getNumberListFromBibleBook("$bookNum,$chapter,", false),
+                          _getNumberListFromBibleBook(
+                              "$bookNum,$chapter,", false),
                           verseStart, (index) {
                         setState(() {
                           verseStart = index + 1;
                           if (verseEnd < verseStart) {
                             verseEnd = index + 1;
-                            _itemScrollController.jumpTo(index: index);
+                            _itemScrollController.jumpToIndex(index);
                           }
                         });
                       }, false),
                       _getNumberListView(
-                          _getNumberListFromBibleBook("$bookNum,$chapter,", false),
+                          _getNumberListFromBibleBook(
+                              "$bookNum,$chapter,", false),
                           verseEnd, (index) {
                         setState(() {
                           verseEnd = index + 1;
@@ -160,9 +171,7 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
                       }, true),
                     ],
                   ),
-                  Text("Add $book $chapter:$verseStart" +
-                      (verseEnd > verseStart ? "-$verseEnd" : "") +
-                      "\nin $translation"),
+                  Text("Add $book " + getPassageName(chapter, verseStart, verseEnd) + "\nin $translation"),
                 ],
               );
             },
@@ -171,15 +180,23 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
       });
 }
 
+  String getPassageName(int chapter, int verseStart, int verseEnd) {
+    return "$chapter" +
+        (verseStart > 0 ? ":$verseStart" : "") +
+        (verseEnd > verseStart ? "-$verseEnd" : "");
+  }
+
 _getNumberListView(
     List items, int i, Function onTapAction, bool useItemScrollController) {
   return Container(
     padding: EdgeInsets.only(top: 40),
     width: 75,
-    child: ScrollablePositionedList.builder(
-      itemCount: items.length,
-      itemScrollController:
-          useItemScrollController ? _itemScrollController : null,
+    child: IndexedListView.builder(
+      maxItemCount: items.length - 1,
+      minItemCount: 0,
+      controller: useItemScrollController
+          ? _itemScrollController
+          : IndexedScrollController(),
       itemBuilder: (BuildContext context, int index) {
         return items[index].toString().isNotEmpty
             ? InkWell(
