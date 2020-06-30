@@ -17,7 +17,6 @@ dependencies:
   flutter_launcher_icons: "^0.7.3"
   url_launcher: ^5.4.11
   connectivity: ^0.4.8+6
-  #hardware_buttons: ^1.0.0
   ping_discover_network: ^0.2.0+1
   indexed_list_view: ^1.0.9
 

@@ -41,7 +41,9 @@
 - [x] Settings page
     - [x] Auto-connect
     - [x] Swipe navigation
-    - [ ] Volume navigation
+    - [x] Volume navigation
+        - [ ] Override volume change
+        - [ ] Add extra options
     - [?] Dpad navigation
     - [?] Timeout length
     - [x] Dark theme
@@ -62,7 +64,7 @@
 - [x] Multiple language support
 - [?] Search help
 - [x] Section titles
-- [x] Keyboard shortcuts
+- [x] Keyboard shortcuts (Android, no support for iOS yet)
 - [x] Message if sending a signal failed
 - [x] Bible add and go live
 - [x] Ask to exit on back (Android)
