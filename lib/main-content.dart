@@ -59,6 +59,9 @@ class _MainState extends State<MainPage> {
     if (this._scheduleItems.toString() != scheduleItems.toString()) {
       setState(() {
         this._scheduleItems = scheduleItems;
+        if (scheduleItems.getLiveItemPos() < 0) {
+          _setLiveItem(LiveItem(""));
+        }
       });
     }
   }
@@ -94,6 +97,7 @@ class _MainState extends State<MainPage> {
   }
 
   void _setLiveItem(LiveItem liveItem) async {
+    print(liveItem.toString());
     if (this._liveItem.titleText != liveItem.titleText ||
         this._liveItem.activeSlide != liveItem.activeSlide ||
         !listEquals(this._liveItem.lyrics, liveItem.lyrics)) {
@@ -111,6 +115,7 @@ class _MainState extends State<MainPage> {
         });
       } else {
         setState(() {
+          print("set item");
           this._liveItem = liveItem;
           _itemScrollController.jumpToIndex(liveItem.activeSlide);
         });

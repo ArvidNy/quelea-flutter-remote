@@ -6,7 +6,7 @@
 - [x] Bounce on last items on iOS
 - [ ] IPv6 addresses should be ignored
 - [x] An entire chapter can't be added without manully setting the verses
-- [ ] The view isn't cleared if the connection is lost
+- [x] The view isn't cleared if the connection is lost
 - [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
 
 ## Features
