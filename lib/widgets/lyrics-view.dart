@@ -15,24 +15,28 @@ class LyricsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(liveItem.lyrics.length);
-    return Column(
-      children: <Widget>[
-        Text(liveItem.titleText),
-        Expanded(
-          child: ScrollablePositionedList.builder(
-            itemScrollController: scrollController,
-            itemCount: liveItem.lyrics.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                child: liveItem.getSlide(index),
-                onTap: () => _lyricsItemClick(index, liveItem),
-              );
-            },
+    // TODO: Remove when the library `ScrollablePositionedList` updates to handle the list length '0'
+    if (liveItem.lyrics.length <= 0) {
+      return Column();
+    } else {
+      return Column(
+        children: <Widget>[
+          Text(liveItem.titleText),
+          Expanded(
+            child: ScrollablePositionedList.builder(
+              itemScrollController: scrollController,
+              itemCount: liveItem.lyrics.length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  child: liveItem.getSlide(index),
+                  onTap: () => _lyricsItemClick(index, liveItem),
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
   }
 
   void _lyricsItemClick(int index, LiveItem liveItem) {

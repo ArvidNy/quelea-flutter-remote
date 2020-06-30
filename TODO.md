@@ -2,7 +2,9 @@
 
 ## Bugs
 - [ ] The dialog sometimes appears even though the server URL automatically has been found
-- [ ] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
+- [ ] Automatic scroll to slide doesn't work if slide actions are activated
+- [ ] Bounce on last items on iOS
+- [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
 
 ## Features
 - [x] Connecting to a server
@@ -36,7 +38,7 @@
     - [x] Swipe navigation
     - [ ] Volume navigation
     - [ ] Dpad navigation
-    - [ ] Timeout length
+    - [?] Timeout length
     - [x] Dark theme
     - [x] Disable the recording button
     - [x] About page

@@ -105,17 +105,21 @@ class _MainState extends State<MainPage> {
           PaintingBinding.instance.imageCache.clear();
           Future.delayed(Duration(milliseconds: 1000)).then((value) {
             this._liveItem = liveItem;
-            _itemScrollController.scrollTo(
-                index: liveItem.activeSlide,
-                duration: Duration(milliseconds: 100));
+            if (_itemScrollController.isAttached) {
+              _itemScrollController.scrollTo(
+                  index: liveItem.activeSlide,
+                  duration: Duration(milliseconds: 100));
+            }
           });
         });
       } else {
         setState(() {
           this._liveItem = liveItem;
-          _itemScrollController.scrollTo(
-              index: liveItem.activeSlide,
-              duration: Duration(milliseconds: 100));
+          if (_itemScrollController.isAttached) {
+            _itemScrollController.scrollTo(
+                index: liveItem.activeSlide,
+                duration: Duration(milliseconds: 100));
+          }
         });
       }
     }
@@ -215,8 +219,8 @@ class _MainState extends State<MainPage> {
               onPressed: () => global.serverVersion < 2020.1
                   ? global.needsNewerServerSnackbar(2020.1)
                   : showAddNoticeDialog(context),
-              tooltip:
-                  AppLocalizations.of(context).getText("remote.send.notice.tooltip"),
+              tooltip: AppLocalizations.of(context)
+                  .getText("remote.send.notice.tooltip"),
             )
           : Container(),
     ];
