@@ -17,6 +17,7 @@ class ScheduleDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    global.drawerContext = context;
     var flatButton = FlatButton(
       onPressed: () => _logout(context),
       child: Row(

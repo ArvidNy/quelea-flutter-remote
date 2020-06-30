@@ -4,6 +4,7 @@
 - [ ] The dialog sometimes appears even though the server URL automatically has been found
 - [ ] Automatic scroll to slide doesn't work if slide actions are activated
 - [ ] Bounce on last items on iOS
+- [ ] Ignore IPv6 addresses
 - [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
 
 ## Features
@@ -60,7 +61,7 @@
 - [ ] Keyboard shortcuts
 - [ ] Message if sending a signal failed
 - [ ] Bible add and go live
-- [ ] Ask to exit on back (Android)
-- [ ] Open/close drawer with back (Android)
+- [x] Ask to exit on back (Android)
+- [x] Open/close drawer with back (Android)
 - [ ] Add support for ChromeBook (Android)
 - [ ] Crash handling

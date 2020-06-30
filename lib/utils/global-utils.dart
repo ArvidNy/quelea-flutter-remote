@@ -11,6 +11,7 @@ BuildContext context;
 bool debug = true;
 SyncHandler syncHandler = new SyncHandler();
 final scaffoldKey = GlobalKey<ScaffoldState>();
+BuildContext drawerContext;
 String chapterList;
 StatusItem statusHandler = StatusItem();
 double serverVersion = 2020.0;

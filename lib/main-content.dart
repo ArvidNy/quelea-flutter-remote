@@ -5,10 +5,13 @@ import 'package:preferences/preferences.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import './dialogs/bible-dialog.dart';
+import './dialogs/exit-dialog.dart';
 import './dialogs/notice-dialog.dart';
 import './dialogs/search-type-dialog.dart';
 import './handlers/download-handler.dart';
+import './handlers/language-delegate.dart';
 import './handlers/search-delegate.dart';
+import './objects/schedule-list.dart';
 import './objects/status-item.dart';
 import './utils/global-utils.dart' as global;
 import './widgets/live-item.dart';
@@ -16,9 +19,7 @@ import './widgets/lyrics-view.dart';
 import './widgets/navigation-buttons.dart';
 import './widgets/schedule-drawer.dart';
 import './widgets/toggle-buttons.dart';
-import './objects/schedule-list.dart';
 import './widgets/schedule-item.dart';
-import './handlers/language-delegate.dart';
 
 class MainPage extends StatefulWidget {
   StreamController<bool> _isLightTheme;
@@ -154,39 +155,50 @@ class _MainState extends State<MainPage> {
       'swipe': _setSwipe,
       'theme': (b) => _isLightTheme.add(b),
     };
-    return Scaffold(
-      drawer: ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
-      drawerScrimColor: Colors.black54,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context).getText("remote.control.app.name"),
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: _getAppBarIcons(),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            ToggleHideButtons(_isLogo, _isBlack, _isClear),
-            Container(height: 16),
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _useSwipe
-                        ? _getSwipeHandler()
-                        : LyricsView(_liveItem, _itemScrollController),
-                  ),
-                  Container(width: 16),
-                  NavigationButtons()
-                ],
-              ),
+    return WillPopScope(
+        child: Scaffold(
+          drawer:
+              ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
+          drawerScrimColor: Colors.black54,
+          appBar: AppBar(
+            title: Text(
+              AppLocalizations.of(context).getText("remote.control.app.name"),
+              style: TextStyle(color: Colors.white),
             ),
-          ],
+            actions: _getAppBarIcons(),
+          ),
+          body: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                ToggleHideButtons(_isLogo, _isBlack, _isClear),
+                Container(height: 16),
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: _useSwipe
+                            ? _getSwipeHandler()
+                            : LyricsView(_liveItem, _itemScrollController),
+                      ),
+                      Container(width: 16),
+                      NavigationButtons()
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    );
+        onWillPop: () {
+          if (!global.drawerContext.toString().contains("dirty") &&
+              Scaffold.of(global.drawerContext).isDrawerOpen) {
+            Navigator.pop(global.drawerContext, true);
+            return Future<bool>.value(false);
+          } else {
+            return showExitDialog(context);
+          }
+        });
   }
 
   _getAppBarIcons() {
