@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../handlers/sync-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -11,6 +12,7 @@ BuildContext context;
 bool debug = true;
 SyncHandler syncHandler = new SyncHandler();
 final scaffoldKey = GlobalKey<ScaffoldState>();
+BuildContext drawerContext;
 String chapterList;
 StatusItem statusHandler = StatusItem();
 double serverVersion = 2020.0;
@@ -49,3 +51,11 @@ void needsNewerServerSnackbar(double version) {
         .replaceFirst("\$1", version.toString())),
   ));
 }
+
+  launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }

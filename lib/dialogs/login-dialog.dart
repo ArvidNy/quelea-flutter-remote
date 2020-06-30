@@ -15,8 +15,7 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
     controller: TextEditingController(text: isPassword ? "" : global.url),
     keyboardType: TextInputType.url,
     decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: isPassword ? "" : global.url),
+        border: OutlineInputBorder(), labelText: isPassword ? "" : global.url),
     onSubmitted: (text) {
       if (global.debug) print("submitted");
       if (isPassword) {
@@ -36,24 +35,36 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
             return Future.value(false);
           },
           child: AlertDialog(
-            title: Text(message),
+            title: Row(
+              children: <Widget>[
+                Expanded(child: Text(message)),
+                isPassword ? Container() : IconButton(
+                    icon: Icon(Icons.help),
+                    onPressed: () => global.launchURL(
+                        "https://quelea-projection.github.io/docs/Remote_Troubleshooting"))
+              ],
+            ),
             actions: <Widget>[
               // Exit is not allowed for iOS apps
               Platform.isAndroid
                   ? FlatButton(
-                      child: Text(AppLocalizations.of(context).getText("exit.button")),
+                      child: Text(
+                          AppLocalizations.of(context).getText("exit.button")),
                       onPressed: () {
                         SystemChannels.platform
                             .invokeMethod('SystemNavigator.pop');
                       },
                     )
                   : Column(),
-              isPassword  ? Container() : FlatButton(
-                child: Text(AppLocalizations.of(context).getText("remote.search.server")),
-                onPressed: () {
-                  DownloadHandler().autoConnect(global.context);
-                },
-              ),
+              isPassword
+                  ? Container()
+                  : FlatButton(
+                      child: Text(AppLocalizations.of(context)
+                          .getText("remote.search.server")),
+                      onPressed: () {
+                        DownloadHandler().autoConnect(global.context);
+                      },
+                    ),
               FlatButton(
                 child: Text(AppLocalizations.of(context).getText("ok.button")),
                 onPressed: () {

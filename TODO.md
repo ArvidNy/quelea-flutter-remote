@@ -2,8 +2,11 @@
 
 ## Bugs
 - [ ] The dialog sometimes appears even though the server URL automatically has been found
-- [ ] Automatic scroll to slide doesn't work if slide actions are activated
-- [ ] Bounce on last items on iOS
+- [x] Automatic scroll to slide doesn't work if slide actions are activated
+- [x] Bounce on last items on iOS
+- [ ] IPv6 addresses should be ignored
+- [x] An entire chapter can't be added without manually setting the verses
+- [x] The view isn't cleared if the connection is lost
 - [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
 
 ## Features
@@ -53,14 +56,14 @@
 - [x] Moving items in the schedule
 - [x] Global theme select
 - [x] Notice quick add (future feature in Quelea 2020.1)
-- [ ] Troubleshooting guide
+- [x] Troubleshooting guide
 - [x] Multiple language support
-- [ ] Search help
+- [?] Search help
 - [x] Section titles
 - [ ] Keyboard shortcuts
-- [ ] Message if sending a signal failed
-- [ ] Bible add and go live
-- [ ] Ask to exit on back (Android)
-- [ ] Open/close drawer with back (Android)
-- [ ] Add support for ChromeBook (Android)
+- [x] Message if sending a signal failed
+- [x] Bible add and go live
+- [x] Ask to exit on back (Android)
+- [x] Open/close drawer with back (Android)
+- [?] Add support for ChromeBook (Android)
 - [ ] Crash handling

@@ -30,5 +30,5 @@ void showAddNoticeDialog(BuildContext context) {
 
 addNotice(String message) {
   if (Navigator.canPop(global.context)) Navigator.pop(global.context);
-  DownloadHandler().download("${global.url}/notice/$message", () => {});
+  DownloadHandler().sendSignal("${global.url}/notice/$message", () => {});
 }

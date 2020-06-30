@@ -24,8 +24,8 @@ showThemesDialog(BuildContext context, List<String> themes) {
                   InkWell(
                     child: Image.network("${global.url}/themethumb$index"),
                     onTap: () {
-                      DownloadHandler().download(
-                          "${global.url}/settheme/${themes[index]}", (d) {
+                      DownloadHandler().sendSignal(
+                          "${global.url}/settheme/${themes[index]}", () {
                         Scaffold.of(global.context).showSnackBar(
                           SnackBar(
                             content: Text(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../handlers/download-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -170,38 +169,38 @@ class _SettingsPageState extends State<SettingsPage> {
             PreferenceText(
               AppLocalizations.of(global.context)
                   .getText("help.menu.discussion"),
-              onTap: () => _launchURL("https://quelea.discourse.group/"),
+              onTap: () => global.launchURL("https://quelea.discourse.group/"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("remote.report.issue"),
-              onTap: () => _launchURL(
+              onTap: () => global.launchURL(
                   "https://github.com/arvidny/quelea-flutter-remote/issues"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context)
                   .getText("remote.about.translating"),
-              onTap: () => _launchURL("https://quelea.org/lang"),
+              onTap: () => global.launchURL("https://quelea.org/lang"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("remote.privacy.policy"),
-              onTap: () => _launchURL(
+              onTap: () => global.launchURL(
                   "https://quelea-projection.github.io/docs/Android_Applications_Privacy_Policy"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("remote.donations.link"),
-              onTap: () => _launchURL("https://paypal.me/ArvidNy"),
+              onTap: () => global.launchURL("https://paypal.me/ArvidNy"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("help.menu.facebook"),
-              onTap: () => _launchURL("https://facebook.com/quelea.projection"),
+              onTap: () => global.launchURL("https://facebook.com/quelea.projection"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("help.menu.website"),
-              onTap: () => _launchURL("https://quelea.org"),
+              onTap: () => global.launchURL("https://quelea.org"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("remote.source.code"),
-              onTap: () => _launchURL("https://github.com/ArvidNy/quelea-flutter-remote"),
+              onTap: () => global.launchURL("https://github.com/ArvidNy/quelea-flutter-remote"),
             ),
           ]),
         ),
@@ -227,13 +226,5 @@ class _SettingsPageState extends State<SettingsPage> {
           Text(AppLocalizations.of(global.context).getText(
               "remote.about.text.responsibility"))
         ]);
-  }
-
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

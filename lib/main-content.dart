@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:indexed_list_view/indexed_list_view.dart';
 import 'package:preferences/preferences.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import './dialogs/bible-dialog.dart';
+import './dialogs/exit-dialog.dart';
 import './dialogs/notice-dialog.dart';
 import './dialogs/search-type-dialog.dart';
 import './handlers/download-handler.dart';
@@ -39,7 +40,7 @@ class _MainState extends State<MainPage> {
   bool _isClear = false;
   bool _isRecord = false;
   LiveItem _liveItem = LiveItem("");
-  final ItemScrollController _itemScrollController = ItemScrollController();
+  final _itemScrollController = IndexedScrollController();
   StreamController<bool> _isLightTheme;
   final FocusNode _focusNode = FocusNode();
 
@@ -87,7 +88,7 @@ class _MainState extends State<MainPage> {
             "${global.url}/section${int.parse(event.data.keyLabel) - 1}",
             () {});
       } else if (event.data.logicalKey == LogicalKeyboardKey.keyT &&
-          event.data.isMetaPressed) {
+          (event.data.isMetaPressed || event.data.isControlPressed)) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -117,6 +118,9 @@ class _MainState extends State<MainPage> {
     if (this._scheduleItems.toString() != scheduleItems.toString()) {
       setState(() {
         this._scheduleItems = scheduleItems;
+        if (scheduleItems.getLiveItemPos() < 0) {
+          _setLiveItem(LiveItem(""));
+        }
       });
     }
   }
@@ -152,6 +156,7 @@ class _MainState extends State<MainPage> {
   }
 
   void _setLiveItem(LiveItem liveItem) async {
+    print(liveItem.toString());
     if (this._liveItem.titleText != liveItem.titleText ||
         this._liveItem.activeSlide != liveItem.activeSlide ||
         !listEquals(this._liveItem.lyrics, liveItem.lyrics)) {
@@ -164,21 +169,14 @@ class _MainState extends State<MainPage> {
           PaintingBinding.instance.imageCache.clear();
           Future.delayed(Duration(milliseconds: 1000)).then((value) {
             this._liveItem = liveItem;
-            if (_itemScrollController.isAttached) {
-              _itemScrollController.scrollTo(
-                  index: liveItem.activeSlide,
-                  duration: Duration(milliseconds: 100));
-            }
+            _itemScrollController.jumpToIndex(liveItem.activeSlide);
           });
         });
       } else {
         setState(() {
+          print("set item");
           this._liveItem = liveItem;
-          if (_itemScrollController.isAttached) {
-            _itemScrollController.scrollTo(
-                index: liveItem.activeSlide,
-                duration: Duration(milliseconds: 100));
-          }
+          _itemScrollController.jumpToIndex(liveItem.activeSlide);
         });
       }
     }
@@ -216,22 +214,19 @@ class _MainState extends State<MainPage> {
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: _handleKeyEvent,
-      child: Scaffold(
-        drawer:
-            ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
-        drawerScrimColor: Colors.black54,
-        appBar: AppBar(
-          title: Text(
-            AppLocalizations.of(context).getText("remote.control.app.name"),
-            style: TextStyle(color: Colors.white),
+      child: WillPopScope(
+        child: Scaffold(
+          drawer:
+              ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
+          drawerScrimColor: Colors.black54,
+          appBar: AppBar(
+            title: Text(
+              AppLocalizations.of(context).getText("remote.control.app.name"),
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: _getAppBarIcons(),
           ),
-          actions: _getAppBarIcons(),
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(_focusNode);
-          },
-          child: Container(
+          body: Container(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
@@ -254,6 +249,15 @@ class _MainState extends State<MainPage> {
             ),
           ),
         ),
+        onWillPop: () {
+          if (!global.drawerContext.toString().contains("dirty") &&
+              Scaffold.of(global.drawerContext).isDrawerOpen) {
+            Navigator.pop(global.drawerContext, true);
+            return Future<bool>.value(false);
+          } else {
+            return showExitDialog(context);
+          }
+        },
       ),
     );
   }
@@ -275,8 +279,8 @@ class _MainState extends State<MainPage> {
               icon: _isRecord
                   ? Icon(Icons.mic, color: Colors.red[300])
                   : Icon(Icons.mic, color: Colors.white),
-              onPressed: () =>
-                  DownloadHandler().download(global.url + "/record", () => {}),
+              onPressed: () => DownloadHandler()
+                  .sendSignal(global.url + "/record", () => {}),
               tooltip: _isRecord
                   ? AppLocalizations.of(context).getText("pause.record.tooltip")
                   : AppLocalizations.of(context)
@@ -324,7 +328,7 @@ class _MainState extends State<MainPage> {
       direction: swipeDirection,
       onDismissed: (direction) {
         if (DismissDirection.startToEnd == direction) {
-          DownloadHandler().download(
+          DownloadHandler().sendSignal(
               global.url +
                   (PrefService.getString("swipe_navigation_action")
                           .contains("item")
@@ -332,7 +336,7 @@ class _MainState extends State<MainPage> {
                       : "/prev"),
               () => {});
         } else {
-          DownloadHandler().download(
+          DownloadHandler().sendSignal(
               global.url +
                   (PrefService.getString("swipe_navigation_action")
                           .contains("item")

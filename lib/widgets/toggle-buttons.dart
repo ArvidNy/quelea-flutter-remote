@@ -48,7 +48,7 @@ class ToggleHideButtons extends StatelessWidget {
       child: RaisedButton(
         elevation: 5,
         padding: EdgeInsets.all(8.0),
-        onPressed: () => DownloadHandler().download(url + "/$btnUrl", () => {}),
+        onPressed: () => DownloadHandler().sendSignal(url + "/$btnUrl", () => {}),
         shape: CircleBorder(),
         color: isPressed ? pressedColor : normalColor,
         child: Container(

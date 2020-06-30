@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:indexed_list_view/indexed_list_view.dart';
 
 import '../handlers/download-handler.dart';
 import '../utils/global-utils.dart';
@@ -9,42 +9,45 @@ import '../widgets/live-item.dart';
 /// `LiveItem` in a `ListView`.
 class LyricsView extends StatelessWidget {
   final LiveItem liveItem;
-  final ItemScrollController scrollController;
+  final IndexedScrollController scrollController;
 
   LyricsView(this.liveItem, this.scrollController);
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Remove when the library `ScrollablePositionedList` updates to handle the list length '0'
-    if (liveItem.lyrics.length <= 0) {
-      return Column();
-    } else {
-      return Column(
-        children: <Widget>[
-          Text(liveItem.titleText),
-          Expanded(
-            child: ScrollablePositionedList.builder(
-              itemScrollController: scrollController,
-              itemCount: liveItem.lyrics.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  child: liveItem.getSlide(index),
-                  onTap: () => _lyricsItemClick(index, liveItem),
-                );
-              },
-            ),
+    // Workaround for infinite scroll both past first item
+    scrollController.addListener(() {
+      if (scrollController.position.pixels < 0) {
+        scrollController.animateToIndex(0);
+      }
+    });
+    return Column(
+      children: <Widget>[
+        Text(liveItem.titleText),
+        Expanded(
+          child: IndexedListView.builder(
+            controller: scrollController,
+            maxItemCount: liveItem.lyrics.length - 1,
+            minItemCount: 0,
+            itemBuilder: (context, index) {
+              return InkWell(
+                child: liveItem.getSlide(index),
+                onTap: () => _lyricsItemClick(index, liveItem),
+              );
+            },
           ),
-        ],
-      );
-    }
+        ),
+      ],
+    );
   }
 
   void _lyricsItemClick(int index, LiveItem liveItem) {
     if (liveItem.isMedia) {
       print(liveItem.lyrics.toString());
-      DownloadHandler().download(url + "/play", () => {});
+      DownloadHandler().sendSignal(url + "/play", () => {});
     } else {
-      DownloadHandler().download(url + "/section" + index.toString(), () => {});
+      DownloadHandler()
+          .sendSignal(url + "/section" + index.toString(), () => {});
     }
   }
 }

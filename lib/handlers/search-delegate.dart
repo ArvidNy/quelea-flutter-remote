@@ -25,13 +25,14 @@ class SongSearchDelegate extends SearchDelegate<String> {
           showSuggestions(context);
         },
       ),
-      IconButton(
-        tooltip: AppLocalizations.of(global.context).getText("help.menu"),
-        icon: const Icon((Icons.help)),
-        onPressed: () {
-          // TODO: Add help
-        },
-      ),
+      // Might be self-explanatory and not needed
+      // IconButton(
+      //   tooltip: AppLocalizations.of(global.context).getText("help.menu"),
+      //   icon: const Icon((Icons.help)),
+      //   onPressed: () {
+      //     
+      //   },
+      // ),
     ];
   }
 

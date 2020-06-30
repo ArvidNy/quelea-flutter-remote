@@ -24,7 +24,7 @@ class DownloadHandler {
   ///
   /// Example:
   /// ```
-  /// download(global.url + "/play", (downloadedData) => {
+  /// download(global.url + "/lyrics", (downloadedData) => {
   ///   // parse downloaded data
   /// })
   /// ```
@@ -32,6 +32,9 @@ class DownloadHandler {
   /// Note: Some URLs will return specific items, such as
   /// `"/lyrics"` (`LiveItem`) or `"/schedule"` (`ScheduleList`).
   /// See the method `_parseData` for more info.
+  /// 
+  /// This method should only be used when a server response is
+  /// expected. Use `sendSignal` otherwise.
   Future download(String urlString, Function update) async {
     if (global.debug) print(urlString);
     try {
@@ -47,10 +50,42 @@ class DownloadHandler {
       if (connectionFailed > 5) {
         if (!Navigator.canPop(global.context)) {
           showInputDialog(
-              global.context, AppLocalizations.of(global.context).getText("remote.failed.finding.server"), false);
+              global.context,
+              AppLocalizations.of(global.context)
+                  .getText("remote.failed.finding.server"),
+              false);
         }
         global.syncHandler.stop();
       }
+    }
+  }
+
+  /// An async method for sending a signal to the server.
+  ///
+  /// Example:
+  /// ```
+  /// sendSignal(global.url + "/play", () => {
+  ///   // Code to run when finished
+  /// })
+  /// ```
+  ///
+  /// This method should only be used when no server response is
+  /// expected. Use `download` otherwise.
+  Future sendSignal(String urlString, Function update) async {
+    if (global.debug) print(urlString);
+    try {
+      var url = Uri.parse(urlString);
+      var httpClient = HttpClient();
+      var request = await httpClient.getUrl(url);
+      var response = await request.close();
+      print(response.statusCode);
+      if (response.statusCode != 200) {
+        _showSignalFailedSnackbar();
+      }
+      update();
+    } catch (exception) {
+      print("exception: $exception");
+      _showSignalFailedSnackbar();
     }
   }
 
@@ -78,6 +113,7 @@ class DownloadHandler {
           content: Text(data.join()),
         ),
       );
+      update();
     } else {
       update(data.join());
     }
@@ -118,16 +154,23 @@ class DownloadHandler {
         if (onValue["code"] == 200) {
           global.syncHandler.isConnected = true;
           if (onValue["data"].toString().contains("password")) {
-            showInputDialog(context, AppLocalizations.of(global.context).getText("remote.control.password"), true);
+            showInputDialog(
+                context,
+                AppLocalizations.of(global.context)
+                    .getText("remote.control.password"),
+                true);
           } else if (onValue["data"].toString().contains("logobutton")) {
             Scaffold.of(context).showSnackBar(SnackBar(
               duration: Duration(seconds: 3),
-              content: Text(AppLocalizations.of(global.context).getText("remote.connected")),
+              content: Text(AppLocalizations.of(global.context)
+                  .getText("remote.connected")),
             ));
             PrefService.setString("server_url", url);
             global.syncHandler.start();
             download("$url/serverversion", (response) {
-              if (response.toString().contains("apple-mobile-web-app-capable")) {
+              if (response
+                  .toString()
+                  .contains("apple-mobile-web-app-capable")) {
                 global.serverVersion = 2020.0;
               } else {
                 global.serverVersion = double.parse(response.toString());
@@ -135,18 +178,29 @@ class DownloadHandler {
             });
           } else {
             showInputDialog(
-                context, AppLocalizations.of(global.context).getText("remote.wrong.content"), false);
+                context,
+                AppLocalizations.of(global.context)
+                    .getText("remote.wrong.content"),
+                false);
           }
         } else {
           SchedulerBinding.instance.addPostFrameCallback(
               (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
-          showInputDialog(context, AppLocalizations.of(global.context).getText("remote.failed.finding.server"), false);
+          showInputDialog(
+              context,
+              AppLocalizations.of(global.context)
+                  .getText("remote.failed.finding.server"),
+              false);
         }
       }).catchError((onError) {
         SchedulerBinding.instance.addPostFrameCallback(
             (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
         print("Catch error: " + onError.toString());
-        showInputDialog(context, AppLocalizations.of(global.context).getText("remote.failed.finding.server"), false);
+        showInputDialog(
+            context,
+            AppLocalizations.of(global.context)
+                .getText("remote.failed.finding.server"),
+            false);
       });
     }
   }
@@ -172,7 +226,8 @@ class DownloadHandler {
         }
       });
     } else {
-      showInputDialog(context, AppLocalizations.of(global.context).getText("remote.no.wifi"), false);
+      showInputDialog(context,
+          AppLocalizations.of(global.context).getText("remote.no.wifi"), false);
     }
   }
 
@@ -196,10 +251,19 @@ class DownloadHandler {
           children: <Widget>[
             CircularProgressIndicator(),
             Padding(padding: EdgeInsets.all(16)),
-            Text(AppLocalizations.of(global.context).getText("loading.text") + "...")
+            Text(
+                "${AppLocalizations.of(global.context).getText("loading.text")}...")
           ],
         ),
       ),
     );
+  }
+
+  void _showSignalFailedSnackbar() {
+    global.scaffoldKey.currentState.hideCurrentSnackBar();
+    global.scaffoldKey.currentState.showSnackBar(SnackBar(
+      duration: Duration(seconds: 3),
+      content: Text(AppLocalizations.of(global.context).getText("remote.signal.failed")),
+    ));
   }
 }
