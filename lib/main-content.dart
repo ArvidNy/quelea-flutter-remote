@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:preferences/preferences.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -8,7 +9,9 @@ import './dialogs/bible-dialog.dart';
 import './dialogs/notice-dialog.dart';
 import './dialogs/search-type-dialog.dart';
 import './handlers/download-handler.dart';
+import './handlers/language-delegate.dart';
 import './handlers/search-delegate.dart';
+import './objects/schedule-list.dart';
 import './objects/status-item.dart';
 import './utils/global-utils.dart' as global;
 import './widgets/live-item.dart';
@@ -16,9 +19,8 @@ import './widgets/lyrics-view.dart';
 import './widgets/navigation-buttons.dart';
 import './widgets/schedule-drawer.dart';
 import './widgets/toggle-buttons.dart';
-import './objects/schedule-list.dart';
 import './widgets/schedule-item.dart';
-import './handlers/language-delegate.dart';
+import './pages/settings-page.dart';
 
 class MainPage extends StatefulWidget {
   StreamController<bool> _isLightTheme;
@@ -39,12 +41,69 @@ class _MainState extends State<MainPage> {
   LiveItem _liveItem = LiveItem("");
   final ItemScrollController _itemScrollController = ItemScrollController();
   StreamController<bool> _isLightTheme;
+  final FocusNode _focusNode = FocusNode();
 
   bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
       .contains("off");
   bool _disableRecord = PrefService.getBool("disable_record") ?? false;
 
   _MainState(this._isLightTheme);
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleKeyEvent(RawKeyEvent event) {
+    if (event.runtimeType.toString() == 'RawKeyDownEvent') {
+      print(event.data.logicalKey);
+      if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
+        if (event.data.isControlPressed) {
+          DownloadHandler().download("${global.url}/nextitem", () {});
+        } else {
+          DownloadHandler().download("${global.url}/next", () {});
+        }
+      } else if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
+        if (event.data.isControlPressed) {
+          DownloadHandler().download("${global.url}/previtem", () {});
+        } else {
+          DownloadHandler().download("${global.url}/prev", () {});
+        }
+      } else if (event.data.logicalKey == LogicalKeyboardKey.pageDown) {
+        DownloadHandler().download("${global.url}/next", () {});
+      } else if (event.data.logicalKey == LogicalKeyboardKey.pageUp) {
+        DownloadHandler().download("${global.url}/prev", () {});
+      } else if (event.data.logicalKey == LogicalKeyboardKey.f5) {
+        DownloadHandler().download("${global.url}/tlogo", () {});
+      } else if (event.data.logicalKey == LogicalKeyboardKey.f6) {
+        DownloadHandler().download("${global.url}/black", () {});
+      } else if (event.data.logicalKey == LogicalKeyboardKey.f7) {
+        DownloadHandler().download("${global.url}/clear", () {});
+      } else if (event.data.logicalKey.keyId <=
+              LogicalKeyboardKey.digit9.keyId &&
+          event.data.logicalKey.keyId >= LogicalKeyboardKey.digit1.keyId) {
+        DownloadHandler().download(
+            "${global.url}/section${int.parse(event.data.keyLabel) - 1}",
+            () {});
+      } else if (event.data.logicalKey == LogicalKeyboardKey.keyT &&
+          event.data.isMetaPressed) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(
+              title: AppLocalizations.of(context).getText("options.title"),
+              settingsFunctions: <String, Function>{
+                'record': _setDisableRecord,
+                'swipe': _setSwipe,
+                'theme': (b) => _isLightTheme.add(b),
+              },
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   void _setRecord(bool isRecord) {
     if (this._isRecord != isRecord) {
@@ -154,36 +213,46 @@ class _MainState extends State<MainPage> {
       'swipe': _setSwipe,
       'theme': (b) => _isLightTheme.add(b),
     };
-    return Scaffold(
-      drawer: ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
-      drawerScrimColor: Colors.black54,
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context).getText("remote.control.app.name"),
-          style: TextStyle(color: Colors.white),
+    return RawKeyboardListener(
+      focusNode: _focusNode,
+      onKey: _handleKeyEvent,
+      child: Scaffold(
+        drawer:
+            ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
+        drawerScrimColor: Colors.black54,
+        appBar: AppBar(
+          title: Text(
+            AppLocalizations.of(context).getText("remote.control.app.name"),
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: _getAppBarIcons(),
         ),
-        actions: _getAppBarIcons(),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            ToggleHideButtons(_isLogo, _isBlack, _isClear),
-            Container(height: 16),
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _useSwipe
-                        ? _getSwipeHandler()
-                        : LyricsView(_liveItem, _itemScrollController),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(_focusNode);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                ToggleHideButtons(_isLogo, _isBlack, _isClear),
+                Container(height: 16),
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: _useSwipe
+                            ? _getSwipeHandler()
+                            : LyricsView(_liveItem, _itemScrollController),
+                      ),
+                      Container(width: 16),
+                      NavigationButtons()
+                    ],
                   ),
-                  Container(width: 16),
-                  NavigationButtons()
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
