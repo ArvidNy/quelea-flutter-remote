@@ -42,9 +42,9 @@ class LyricsView extends StatelessWidget {
   void _lyricsItemClick(int index, LiveItem liveItem) {
     if (liveItem.isMedia) {
       print(liveItem.lyrics.toString());
-      DownloadHandler().download(url + "/play", () => {});
+      DownloadHandler().sendSignal(url + "/play", () => {});
     } else {
-      DownloadHandler().download(url + "/section" + index.toString(), () => {});
+      DownloadHandler().sendSignal(url + "/section" + index.toString(), () => {});
     }
   }
 }

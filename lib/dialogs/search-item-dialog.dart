@@ -24,10 +24,10 @@ void showAddSearchItemDialog(BuildContext context, String title, String lyrics,
             FlatButton(
               child: Text(AppLocalizations.of(context).getText("remote.add.go.live")),
               onPressed: () {
-                DownloadHandler().download(
+                DownloadHandler().sendSignal(
                     global.url + "/add/$id",
-                    (ignore) => DownloadHandler()
-                        .download(global.url + "/gotoitem9999", () => {}));
+                    () => DownloadHandler()
+                        .sendSignal(global.url + "/gotoitem9999", () => {}));
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                   closeSearch();
@@ -37,7 +37,7 @@ void showAddSearchItemDialog(BuildContext context, String title, String lyrics,
             FlatButton(
               child: Text("Add"),
               onPressed: () {
-                DownloadHandler().download(global.url + "/add/$id", () => {});
+                DownloadHandler().sendSignal(global.url + "/add/$id", () => {});
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);
                   closeSearch();

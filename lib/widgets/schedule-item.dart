@@ -83,7 +83,7 @@ class ScheduleItem extends StatelessWidget {
         child: Text(text),
       ),
       onTap: () {
-        DownloadHandler().download("${global.url}/$action/$index", () => {});
+        DownloadHandler().sendSignal("${global.url}/$action/$index", () => {});
         if (Navigator.canPop(global.context)) Navigator.pop(global.context);
       },
     );

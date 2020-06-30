@@ -111,7 +111,7 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
                       global.url +
                           "/addbible/$translation/$book/$chapter:$verseStart" +
                           (verseEnd != verseStart ? "-$verseEnd" : ""),
-                      (ignore) => DownloadHandler()
+                      () => DownloadHandler()
                         .download(global.url + "/gotoitem9999", () => {}));
                 }),
             FlatButton(

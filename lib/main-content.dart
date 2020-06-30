@@ -219,7 +219,7 @@ class _MainState extends State<MainPage> {
                   ? Icon(Icons.mic, color: Colors.red[300])
                   : Icon(Icons.mic, color: Colors.white),
               onPressed: () =>
-                  DownloadHandler().download(global.url + "/record", () => {}),
+                  DownloadHandler().sendSignal(global.url + "/record", () => {}),
               tooltip: _isRecord
                   ? AppLocalizations.of(context).getText("pause.record.tooltip")
                   : AppLocalizations.of(context)
@@ -267,7 +267,7 @@ class _MainState extends State<MainPage> {
       direction: swipeDirection,
       onDismissed: (direction) {
         if (DismissDirection.startToEnd == direction) {
-          DownloadHandler().download(
+          DownloadHandler().sendSignal(
               global.url +
                   (PrefService.getString("swipe_navigation_action")
                           .contains("item")
@@ -275,7 +275,7 @@ class _MainState extends State<MainPage> {
                       : "/prev"),
               () => {});
         } else {
-          DownloadHandler().download(
+          DownloadHandler().sendSignal(
               global.url +
                   (PrefService.getString("swipe_navigation_action")
                           .contains("item")

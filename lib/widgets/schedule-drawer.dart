@@ -102,7 +102,7 @@ class ScheduleDrawer extends StatelessWidget {
 
   void _logout(BuildContext context) {
     global.syncHandler.stop();
-    DownloadHandler().download(global.url + "/logout", (res) {
+    DownloadHandler().sendSignal(global.url + "/logout", () {
       DownloadHandler().testConnection(global.url, context);
     });
   }

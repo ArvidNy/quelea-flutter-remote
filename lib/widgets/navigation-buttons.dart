@@ -12,23 +12,23 @@ class NavigationButtons extends StatelessWidget {
     return Column(
       children: <Widget>[
         _itemButton(
-            () => DownloadHandler().download(url + "/previtem", () => {}),
+            () => DownloadHandler().sendSignal(url + "/previtem", () => {}),
             "images/btn_prev_item.png"),
         Container(
           height: 12,
         ),
-        _slideButton(() => DownloadHandler().download(url + "/prev", () => {}),
+        _slideButton(() => DownloadHandler().sendSignal(url + "/prev", () => {}),
             "images/btn_prev_slide.png"),
         Container(
           height: 12,
         ),
-        _slideButton(() => DownloadHandler().download(url + "/next", () => {}),
+        _slideButton(() => DownloadHandler().sendSignal(url + "/next", () => {}),
             "images/btn_next_slide.png"),
         Container(
           height: 12,
         ),
         _itemButton(
-            () => DownloadHandler().download(url + "/nextitem", () => {}),
+            () => DownloadHandler().sendSignal(url + "/nextitem", () => {}),
             "images/btn_next_item.png"),
       ],
     );

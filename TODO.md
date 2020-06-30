@@ -59,7 +59,7 @@
 - [ ] Search help
 - [x] Section titles
 - [ ] Keyboard shortcuts
-- [ ] Message if sending a signal failed
+- [x] Message if sending a signal failed
 - [x] Bible add and go live
 - [x] Ask to exit on back (Android)
 - [x] Open/close drawer with back (Android)
