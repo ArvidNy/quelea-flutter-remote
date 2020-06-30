@@ -60,7 +60,7 @@
 - [x] Section titles
 - [ ] Keyboard shortcuts
 - [ ] Message if sending a signal failed
-- [ ] Bible add and go live
+- [x] Bible add and go live
 - [x] Ask to exit on back (Android)
 - [x] Open/close drawer with back (Android)
 - [ ] Add support for ChromeBook (Android)

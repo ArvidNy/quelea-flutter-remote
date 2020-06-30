@@ -102,6 +102,19 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
               },
             ),
             FlatButton(
+                child: Text(AppLocalizations.of(context).getText("remote.add.go.live")),
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                  DownloadHandler().download(
+                      global.url +
+                          "/addbible/$translation/$book/$chapter:$verseStart" +
+                          (verseEnd != verseStart ? "-$verseEnd" : ""),
+                      (ignore) => DownloadHandler()
+                        .download(global.url + "/gotoitem9999", () => {}));
+                }),
+            FlatButton(
                 child: Text(AppLocalizations.of(context).getText("ok.button")),
                 onPressed: () {
                   if (Navigator.canPop(context)) {

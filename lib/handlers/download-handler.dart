@@ -78,6 +78,7 @@ class DownloadHandler {
           content: Text(data.join()),
         ),
       );
+      update(data.join());
     } else {
       update(data.join());
     }
