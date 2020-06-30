@@ -87,19 +87,20 @@ class _SettingsPageState extends State<SettingsPage> {
             PrefService.setBool('exp_showos', false);
           },
         ),
-        CheckboxPreference(
-          AppLocalizations.of(global.context).getText('remote.enable.dpad.navigation'),
-          'dpad_navigation_use',
-          desc: AppLocalizations.of(global.context)
-              .getText("remote.dpad.navigation.description"),
-          disabled: true,
-          onChange: () {
-            setState(() {});
-          },
-          onDisable: () {
-            PrefService.setBool('exp_showos', false);
-          },
-        ),
+        // Does keyboard shortcuts have to be optional?
+        // CheckboxPreference(
+        //   AppLocalizations.of(global.context).getText('remote.enable.dpad.navigation'),
+        //   'dpad_navigation_use',
+        //   desc: AppLocalizations.of(global.context)
+        //       .getText("remote.dpad.navigation.description"),
+        //   disabled: true,
+        //   onChange: () {
+        //     setState(() {});
+        //   },
+        //   onDisable: () {
+        //     PrefService.setBool('exp_showos', false);
+        //   },
+        // ),
         DropdownPreference(
           AppLocalizations.of(global.context)
               .getText('remote.swipe.navigation.title'),

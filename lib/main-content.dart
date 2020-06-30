@@ -20,6 +20,7 @@ import './widgets/navigation-buttons.dart';
 import './widgets/schedule-drawer.dart';
 import './widgets/toggle-buttons.dart';
 import './widgets/schedule-item.dart';
+import 'handlers/key-event-handler.dart';
 
 class MainPage extends StatefulWidget {
   StreamController<bool> _isLightTheme;
@@ -46,6 +47,12 @@ class _MainState extends State<MainPage> {
   bool _disableRecord = PrefService.getBool("disable_record") ?? false;
 
   _MainState(this._isLightTheme);
+
+  @override
+  void dispose() {
+    global.focusNode.dispose();
+    super.dispose();
+  }
 
   void _setRecord(bool isRecord) {
     if (this._isRecord != isRecord) {
@@ -97,7 +104,6 @@ class _MainState extends State<MainPage> {
   }
 
   void _setLiveItem(LiveItem liveItem) async {
-    print(liveItem.toString());
     if (this._liveItem.titleText != liveItem.titleText ||
         this._liveItem.activeSlide != liveItem.activeSlide ||
         !listEquals(this._liveItem.lyrics, liveItem.lyrics)) {
@@ -110,12 +116,11 @@ class _MainState extends State<MainPage> {
           PaintingBinding.instance.imageCache.clear();
           Future.delayed(Duration(milliseconds: 1000)).then((value) {
             this._liveItem = liveItem;
-              _itemScrollController.jumpToIndex(liveItem.activeSlide);
+            _itemScrollController.jumpToIndex(liveItem.activeSlide);
           });
         });
       } else {
         setState(() {
-          print("set item");
           this._liveItem = liveItem;
           _itemScrollController.jumpToIndex(liveItem.activeSlide);
         });
@@ -152,7 +157,10 @@ class _MainState extends State<MainPage> {
       'swipe': _setSwipe,
       'theme': (b) => _isLightTheme.add(b),
     };
-    return WillPopScope(
+    return RawKeyboardListener(
+      focusNode: global.focusNode,
+      onKey: (event) => handleKeyEvent(event, context, settingsStateFunctions),
+      child: WillPopScope(
         child: Scaffold(
           drawer:
               ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
@@ -195,7 +203,9 @@ class _MainState extends State<MainPage> {
           } else {
             return showExitDialog(context);
           }
-        });
+        },
+      ),
+    );
   }
 
   _getAppBarIcons() {
@@ -215,8 +225,8 @@ class _MainState extends State<MainPage> {
               icon: _isRecord
                   ? Icon(Icons.mic, color: Colors.red[300])
                   : Icon(Icons.mic, color: Colors.white),
-              onPressed: () =>
-                  DownloadHandler().sendSignal(global.url + "/record", () => {}),
+              onPressed: () => DownloadHandler()
+                  .sendSignal(global.url + "/record", () => {}),
               tooltip: _isRecord
                   ? AppLocalizations.of(context).getText("pause.record.tooltip")
                   : AppLocalizations.of(context)

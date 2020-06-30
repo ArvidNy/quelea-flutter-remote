@@ -42,7 +42,7 @@
     - [x] Auto-connect
     - [x] Swipe navigation
     - [ ] Volume navigation
-    - [ ] Dpad navigation
+    - [?] Dpad navigation
     - [?] Timeout length
     - [x] Dark theme
     - [x] Disable the recording button
@@ -62,7 +62,7 @@
 - [x] Multiple language support
 - [?] Search help
 - [x] Section titles
-- [ ] Keyboard shortcuts
+- [x] Keyboard shortcuts
 - [x] Message if sending a signal failed
 - [x] Bible add and go live
 - [x] Ask to exit on back (Android)

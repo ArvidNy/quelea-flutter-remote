@@ -17,6 +17,7 @@ String chapterList;
 StatusItem statusHandler = StatusItem();
 double serverVersion = 2020.0;
 Map<String, String> lang = {};
+final FocusNode focusNode = FocusNode();
 List<String> supportedLanguages = [
   'en_GB',
   'en_US',
