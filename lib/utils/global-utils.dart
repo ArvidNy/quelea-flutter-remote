@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../handlers/sync-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -50,3 +51,11 @@ void needsNewerServerSnackbar(double version) {
         .replaceFirst("\$1", version.toString())),
   ));
 }
+
+  launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
