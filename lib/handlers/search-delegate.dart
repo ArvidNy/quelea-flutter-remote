@@ -15,7 +15,6 @@ class SongSearchDelegate extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    print(_filterName.length);
     return <Widget>[
       IconButton(
         tooltip: AppLocalizations.of(global.context).getText("clear.search.box"),
