@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:indexed_list_view/indexed_list_view.dart';
 import 'package:preferences/preferences.dart';
 
@@ -21,7 +20,7 @@ import './widgets/navigation-buttons.dart';
 import './widgets/schedule-drawer.dart';
 import './widgets/toggle-buttons.dart';
 import './widgets/schedule-item.dart';
-import './pages/settings-page.dart';
+import 'handlers/key-event-handler.dart';
 
 class MainPage extends StatefulWidget {
   StreamController<bool> _isLightTheme;
@@ -42,7 +41,6 @@ class _MainState extends State<MainPage> {
   LiveItem _liveItem = LiveItem("");
   final _itemScrollController = IndexedScrollController();
   StreamController<bool> _isLightTheme;
-  final FocusNode _focusNode = FocusNode();
 
   bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
       .contains("off");
@@ -52,58 +50,8 @@ class _MainState extends State<MainPage> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    global.focusNode.dispose();
     super.dispose();
-  }
-
-  void _handleKeyEvent(RawKeyEvent event) {
-    if (event.runtimeType.toString() == 'RawKeyDownEvent') {
-      print(event.data.logicalKey);
-      if (event.data.logicalKey == LogicalKeyboardKey.arrowDown) {
-        if (event.data.isControlPressed) {
-          DownloadHandler().download("${global.url}/nextitem", () {});
-        } else {
-          DownloadHandler().download("${global.url}/next", () {});
-        }
-      } else if (event.data.logicalKey == LogicalKeyboardKey.arrowUp) {
-        if (event.data.isControlPressed) {
-          DownloadHandler().download("${global.url}/previtem", () {});
-        } else {
-          DownloadHandler().download("${global.url}/prev", () {});
-        }
-      } else if (event.data.logicalKey == LogicalKeyboardKey.pageDown) {
-        DownloadHandler().download("${global.url}/next", () {});
-      } else if (event.data.logicalKey == LogicalKeyboardKey.pageUp) {
-        DownloadHandler().download("${global.url}/prev", () {});
-      } else if (event.data.logicalKey == LogicalKeyboardKey.f5) {
-        DownloadHandler().download("${global.url}/tlogo", () {});
-      } else if (event.data.logicalKey == LogicalKeyboardKey.f6) {
-        DownloadHandler().download("${global.url}/black", () {});
-      } else if (event.data.logicalKey == LogicalKeyboardKey.f7) {
-        DownloadHandler().download("${global.url}/clear", () {});
-      } else if (event.data.logicalKey.keyId <=
-              LogicalKeyboardKey.digit9.keyId &&
-          event.data.logicalKey.keyId >= LogicalKeyboardKey.digit1.keyId) {
-        DownloadHandler().download(
-            "${global.url}/section${int.parse(event.data.keyLabel) - 1}",
-            () {});
-      } else if (event.data.logicalKey == LogicalKeyboardKey.keyT &&
-          (event.data.isMetaPressed || event.data.isControlPressed)) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(
-              title: AppLocalizations.of(context).getText("options.title"),
-              settingsFunctions: <String, Function>{
-                'record': _setDisableRecord,
-                'swipe': _setSwipe,
-                'theme': (b) => _isLightTheme.add(b),
-              },
-            ),
-          ),
-        );
-      }
-    }
   }
 
   void _setRecord(bool isRecord) {
@@ -156,7 +104,6 @@ class _MainState extends State<MainPage> {
   }
 
   void _setLiveItem(LiveItem liveItem) async {
-    print(liveItem.toString());
     if (this._liveItem.titleText != liveItem.titleText ||
         this._liveItem.activeSlide != liveItem.activeSlide ||
         !listEquals(this._liveItem.lyrics, liveItem.lyrics)) {
@@ -174,7 +121,6 @@ class _MainState extends State<MainPage> {
         });
       } else {
         setState(() {
-          print("set item");
           this._liveItem = liveItem;
           _itemScrollController.jumpToIndex(liveItem.activeSlide);
         });
@@ -212,8 +158,8 @@ class _MainState extends State<MainPage> {
       'theme': (b) => _isLightTheme.add(b),
     };
     return RawKeyboardListener(
-      focusNode: _focusNode,
-      onKey: _handleKeyEvent,
+      focusNode: global.focusNode,
+      onKey: (event) => handleKeyEvent(event, context, settingsStateFunctions),
       child: WillPopScope(
         child: Scaffold(
           drawer:

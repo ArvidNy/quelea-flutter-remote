@@ -166,6 +166,7 @@ class DownloadHandler {
                   .getText("remote.connected")),
             ));
             PrefService.setString("server_url", url);
+            FocusScope.of(context).requestFocus(global.focusNode);
             global.syncHandler.start();
             download("$url/serverversion", (response) {
               if (response
