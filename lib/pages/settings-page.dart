@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 
@@ -73,20 +75,14 @@ class _SettingsPageState extends State<SettingsPage> {
         // ),
         PreferenceTitle(AppLocalizations.of(global.context)
             .getText('remote.navigation.settings.title')),
-        CheckboxPreference(
+        Platform.isAndroid ? CheckboxPreference(
           AppLocalizations.of(global.context)
               .getText('remote.enable.volume.navigation'),
-          'volume_navigation_use',
+          'use_volume_navigation',
           desc: AppLocalizations.of(global.context)
               .getText("remote.volume.navigation.description"),
-          disabled: true,
-          onChange: () {
-            setState(() {});
-          },
-          onDisable: () {
-            PrefService.setBool('exp_showos', false);
-          },
-        ),
+          disabled: false,
+        ) : Container(),
         // Does keyboard shortcuts have to be optional?
         // CheckboxPreference(
         //   AppLocalizations.of(global.context).getText('remote.enable.dpad.navigation'),

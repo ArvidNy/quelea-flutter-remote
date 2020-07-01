@@ -41,8 +41,8 @@
 - [x] Settings page
     - [x] Auto-connect
     - [x] Swipe navigation
-    - [ ] Volume navigation
-        - [ ] Override volume change
+    - [x] Volume navigation (Android)
+        - [x] Override volume change
         - [ ] Add extra options
     - [?] Dpad navigation
     - [?] Timeout length

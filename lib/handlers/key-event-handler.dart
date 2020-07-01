@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:preferences/preference_service.dart';
 
 import './download-handler.dart';
 import './language-delegate.dart';
@@ -11,7 +12,9 @@ void handleKeyEvent(RawKeyEvent event, BuildContext context,
   print(event);
   if (event.runtimeType == RawKeyDownEvent) {
     if (event.data.logicalKey == LogicalKeyboardKey.arrowDown ||
-        event.data.logicalKey == LogicalKeyboardKey.audioVolumeDown ||
+        (event.data.logicalKey == LogicalKeyboardKey.audioVolumeDown &&
+                PrefService.getBool("use_volume_navigation") ??
+            false) ||
         event.data.logicalKey == LogicalKeyboardKey.pageDown) {
       if (event.isControlPressed) {
         DownloadHandler().download("${global.url}/nextitem", () {});
@@ -19,7 +22,9 @@ void handleKeyEvent(RawKeyEvent event, BuildContext context,
         DownloadHandler().download("${global.url}/next", () {});
       }
     } else if (event.data.logicalKey == LogicalKeyboardKey.arrowUp ||
-        event.data.logicalKey == LogicalKeyboardKey.audioVolumeUp ||
+        (event.data.logicalKey == LogicalKeyboardKey.audioVolumeUp &&
+                PrefService.getBool("use_volume_navigation") ??
+            false)  ||
         event.data.logicalKey == LogicalKeyboardKey.pageUp) {
       if (event.isControlPressed) {
         DownloadHandler().download("${global.url}/previtem", () {});
