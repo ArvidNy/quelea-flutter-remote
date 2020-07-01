@@ -8,7 +8,7 @@ showExitDialog<bool>(BuildContext context) {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("${AppLocalizations.of(context).getText("exit.text")}?"),
+          title: Text("${AppLocalizations.of(context).getText("exit.text").trim()}?"),
           actions: <Widget>[
             FlatButton(
               child:

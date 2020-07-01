@@ -100,7 +100,9 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
   showDialog(
       context: context,
       builder: (context) {
-        _itemScrollController.jumpToIndex(0);
+        if (_itemScrollController.hasClients) {
+          _itemScrollController.jumpToIndex(0);
+        }
         return AlertDialog(
           title: Text(title),
           actions: <Widget>[
@@ -210,9 +212,11 @@ _getNumberListView(
                 return _getInkWell(index, items, onTapAction, i);
               },
             )
-          : ListView.builder(itemCount: items.length, itemBuilder: (BuildContext context, int index) {
-              return _getInkWell(index, items, onTapAction, i);
-            }),
+          : ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (BuildContext context, int index) {
+                return _getInkWell(index, items, onTapAction, i);
+              }),
     ),
   );
 }

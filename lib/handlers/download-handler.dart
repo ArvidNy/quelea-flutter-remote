@@ -78,7 +78,6 @@ class DownloadHandler {
       var httpClient = HttpClient();
       var request = await httpClient.getUrl(url);
       var response = await request.close();
-      print(response.statusCode);
       if (response.statusCode != 200) {
         _showSignalFailedSnackbar();
       }
@@ -137,7 +136,7 @@ class DownloadHandler {
   /// if the connection is successful.
   void testConnection(String url, BuildContext context) {
     if (global.debug) print("Test " + url);
-    if (Navigator.canPop(context)) Navigator.pop(context);
+    while (Navigator.canPop(context)) Navigator.pop(context);
     if (!url.startsWith("http")) url = "http://" + url;
     if (!url.replaceFirst("://", "").contains(":")) {
       SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
@@ -236,13 +235,14 @@ class DownloadHandler {
         }
       });
     } else {
+      if (Navigator.canPop(context)) Navigator.pop(context);
       showInputDialog(context,
           AppLocalizations.of(global.context).getText("remote.no.wifi"), false);
     }
   }
 
   Future _testConnection(String urlString) async {
-    print("test $urlString");
+    if (global.debug) print("test $urlString");
     var url = Uri.parse(urlString);
     var httpClient = HttpClient();
     httpClient.connectionTimeout = Duration(milliseconds: 3000);

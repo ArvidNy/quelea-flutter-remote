@@ -1,7 +1,7 @@
 # List of features to implement and bugs left to sort out
 
 ## Bugs
-- [ ] The dialog sometimes appears even though the server URL automatically has been found
+- [?] The dialog sometimes appears even though the server URL automatically has been found
 - [x] Automatic scroll to slide doesn't work if slide actions are activated
 - [x] Bounce on last items on iOS
 - [x] IPv6 addresses should be ignored
