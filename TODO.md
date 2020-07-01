@@ -4,7 +4,7 @@
 - [ ] The dialog sometimes appears even though the server URL automatically has been found
 - [x] Automatic scroll to slide doesn't work if slide actions are activated
 - [x] Bounce on last items on iOS
-- [ ] IPv6 addresses should be ignored
+- [x] IPv6 addresses should be ignored
 - [ ] Dark theme search text isn't visible
 - [ ] Dark theme for Bible number ListView
 - [x] An entire chapter can't be added without manually setting the verses
@@ -41,7 +41,7 @@
 - [x] Settings page
     - [x] Auto-connect
     - [x] Swipe navigation
-    - [x] Volume navigation
+    - [ ] Volume navigation
         - [ ] Override volume change
         - [ ] Add extra options
     - [?] Dpad navigation

@@ -144,6 +144,11 @@ class DownloadHandler {
           context,
           AppLocalizations.of(global.context).getText("remote.port.needed"),
           false));
+    } else if (url.length - url.replaceAll(":", "").length > 2) {
+      SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
+          context,
+          AppLocalizations.of(global.context).getText("remote.ipv6.not.supported"),
+          false));
     } else {
       SchedulerBinding.instance
           .addPostFrameCallback((_) => _showLoadingIndicator(context));
@@ -222,6 +227,10 @@ class DownloadHandler {
         if (addr.exists) {
           DownloadHandler().download("http://${addr.ip}:50015", (html) {
             String remoteUrl = html.toString().split("\n")[1];
+            // Avoid issues with unsupported IPv6
+            if (remoteUrl.length - remoteUrl.replaceAll(":", "").length > 2) {
+              remoteUrl = addr.ip + remoteUrl.substring(remoteUrl.lastIndexOf(":"));
+            }
             testConnection(remoteUrl, context);
           });
         }
