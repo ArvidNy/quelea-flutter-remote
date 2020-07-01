@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indexed_list_view/indexed_list_view.dart';
+import 'package:preferences/preferences.dart';
 
 import '../handlers/download-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -99,6 +100,7 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
   showDialog(
       context: context,
       builder: (context) {
+        _itemScrollController.jumpToIndex(0);
         return AlertDialog(
           title: Text(title),
           actions: <Widget>[
@@ -120,7 +122,8 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
                   }
                   DownloadHandler().download(
                       global.url +
-                          "/addbible/$translation/$book/" + getPassageName(chapter, verseStart, verseEnd),
+                          "/addbible/$translation/$book/" +
+                          getPassageName(chapter, verseStart, verseEnd),
                       () => DownloadHandler()
                           .download(global.url + "/gotoitem9999", () => {}));
                 }),
@@ -132,47 +135,53 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
                   }
                   DownloadHandler().download(
                       global.url +
-                          "/addbible/$translation/$book/" + getPassageName(chapter, verseStart, verseEnd),
+                          "/addbible/$translation/$book/" +
+                          getPassageName(chapter, verseStart, verseEnd),
                       () => {});
                 }),
           ],
           content: StatefulBuilder(
             builder: (context, setState) {
-              return Stack(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      _getNumberListView(
-                          _getNumberListFromBibleBook("$bookNum,", true),
-                          chapter, (index) {
-                        setState(() {
-                          chapter = index + 1;
-                        });
-                      }, false),
-                      _getNumberListView(
-                          _getNumberListFromBibleBook(
-                              "$bookNum,$chapter,", false),
-                          verseStart, (index) {
-                        setState(() {
-                          verseStart = index + 1;
-                          if (verseEnd < verseStart) {
+              return Container(
+                width: 500,
+                child: Stack(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        _getNumberListView(
+                            _getNumberListFromBibleBook("$bookNum,", true),
+                            chapter, (index) {
+                          setState(() {
+                            chapter = index + 1;
+                          });
+                        }, false),
+                        _getNumberListView(
+                            _getNumberListFromBibleBook(
+                                "$bookNum,$chapter,", false),
+                            verseStart, (index) {
+                          setState(() {
+                            verseStart = index + 1;
+                            if (verseEnd < verseStart) {
+                              verseEnd = index + 1;
+                              _itemScrollController.jumpToIndex(index);
+                            }
+                          });
+                        }, false),
+                        _getNumberListView(
+                            _getNumberListFromBibleBook(
+                                "$bookNum,$chapter,", false),
+                            verseEnd, (index) {
+                          setState(() {
                             verseEnd = index + 1;
-                            _itemScrollController.jumpToIndex(index);
-                          }
-                        });
-                      }, false),
-                      _getNumberListView(
-                          _getNumberListFromBibleBook(
-                              "$bookNum,$chapter,", false),
-                          verseEnd, (index) {
-                        setState(() {
-                          verseEnd = index + 1;
-                        });
-                      }, true),
-                    ],
-                  ),
-                  Text("Add $book " + getPassageName(chapter, verseStart, verseEnd) + "\nin $translation"),
-                ],
+                          });
+                        }, true),
+                      ],
+                    ),
+                    Text("Add $book " +
+                        getPassageName(chapter, verseStart, verseEnd) +
+                        "\nin $translation"),
+                  ],
+                ),
               );
             },
           ),
@@ -180,38 +189,60 @@ void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
       });
 }
 
-  String getPassageName(int chapter, int verseStart, int verseEnd) {
-    return "$chapter" +
-        (verseStart > 0 ? ":$verseStart" : "") +
-        (verseEnd > verseStart ? "-$verseEnd" : "");
-  }
+String getPassageName(int chapter, int verseStart, int verseEnd) {
+  return "$chapter" +
+      (verseStart > 0 ? ":$verseStart" : "") +
+      (verseEnd > verseStart ? "-$verseEnd" : "");
+}
 
 _getNumberListView(
     List items, int i, Function onTapAction, bool useItemScrollController) {
-  return Container(
-    padding: EdgeInsets.only(top: 40),
-    width: 75,
-    child: IndexedListView.builder(
-      maxItemCount: items.length - 1,
-      minItemCount: 0,
-      controller: useItemScrollController
-          ? _itemScrollController
-          : IndexedScrollController(),
-      itemBuilder: (BuildContext context, int index) {
-        return items[index].toString().isNotEmpty
-            ? InkWell(
-                onTap: () => onTapAction(index),
-                child: Container(
-                    color: i == int.parse(items[index])
-                        ? Colors.grey[200]
-                        : Colors.white,
-                    height: 45,
-                    child: Center(child: Text(items[index]))),
-              )
-            : Container();
-      },
+  return Expanded(
+    child: Container(
+      padding: EdgeInsets.only(top: 40),
+      width: double.maxFinite,
+      child: useItemScrollController
+          ? IndexedListView.builder(
+              maxItemCount: items.length - 1,
+              minItemCount: 0,
+              controller: _itemScrollController,
+              itemBuilder: (BuildContext context, int index) {
+                return _getInkWell(index, items, onTapAction, i);
+              },
+            )
+          : ListView.builder(itemCount: items.length, itemBuilder: (BuildContext context, int index) {
+              return _getInkWell(index, items, onTapAction, i);
+            }),
     ),
   );
+}
+
+_getInkWell(int index, List items, Function onTapAction, int i) {
+  bool isLightTheme =
+      (PrefService.getString("app_theme") ?? "light").contains("light");
+  Color color;
+  if (i == int.parse(items[index])) {
+    if (isLightTheme) {
+      color = Colors.grey[200];
+    } else {
+      color = Colors.grey[600];
+    }
+  } else {
+    if (isLightTheme) {
+      color = Colors.white;
+    } else {
+      color = Colors.grey[800];
+    }
+  }
+  return items[index].toString().isNotEmpty
+      ? InkWell(
+          onTap: () => onTapAction(index),
+          child: Container(
+              color: color,
+              height: 45,
+              child: Center(child: Text(items[index]))),
+        )
+      : Container();
 }
 
 List<String> _getNumberListFromBibleBook(String startsWith, bool chapter) {
