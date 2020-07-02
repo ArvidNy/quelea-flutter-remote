@@ -40,7 +40,8 @@ class DownloadHandler {
     if (global.debug) print(urlString);
     try {
       var data = await http.get(urlString);
-      if (data.statusCode == 200) _parseData(utf8.decode(data.bodyBytes), urlString, update);
+      if (data.statusCode == 200)
+        _parseData(utf8.decode(data.bodyBytes), urlString, update);
       connectionFailed = 0;
     } catch (exception) {
       if (urlString.contains("lyrics")) connectionFailed++;
@@ -135,80 +136,88 @@ class DownloadHandler {
   /// Opens the `showInputDialog` for entering a new URL
   /// if the connection fails or for entering the password
   /// if the connection is successful.
-  void testConnection(String url, BuildContext context) {
+  void testConnection(String url, BuildContext context, bool autoConnect) {
     if (global.debug) print("Test " + url);
     while (Navigator.canPop(context)) Navigator.pop(context);
     if (!url.startsWith("http")) url = "http://" + url;
-    if (!url.replaceFirst("://", "").contains(":")) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
+    if (_urlIsOk(url, context)) {
+      global.url = url;
+      _testConnection(url).then((onValue) {
+        if (onValue["code"] == 200) {
+          _handleTestResults(onValue, context, autoConnect, url);
+        } else {
+          _failedConnectingDialog(autoConnect, context);
+        }
+      }).catchError((onError) {
+        _failedConnectingDialog(autoConnect, context);
+      });
+    }
+  }
+
+  void _handleTestResults(
+      onValue, BuildContext context, bool autoConnect, String url) {
+    global.scaffoldKey.currentState.hideCurrentSnackBar();
+    if (onValue["data"].toString().contains("password")) {
+      showInputDialog(
           context,
-          AppLocalizations.of(global.context).getText("remote.port.needed"),
-          false));
-    } else if (url.length - url.replaceAll(":", "").length > 2) {
+          AppLocalizations.of(global.context)
+              .getText("remote.control.password"),
+          true);
+    } else if (onValue["data"].toString().contains("logobutton")) {
+      global.syncHandler.isConnected = true;
+      Scaffold.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 3),
+        content: Text(
+            AppLocalizations.of(global.context).getText("remote.connected")),
+      ));
+      PrefService.setString("server_url", url);
+      FocusScope.of(context).requestFocus(global.focusNode);
+      global.syncHandler.start();
+      download("$url/serverversion", (response) {
+        if (response.toString().contains("apple-mobile-web-app-capable")) {
+          global.serverVersion = 2020.0;
+        } else {
+          global.serverVersion = double.parse(response.toString());
+        }
+      });
+    } else {
+      global.syncHandler.isConnected = false;
+      showInputDialog(
+          context,
+          AppLocalizations.of(global.context).getText("remote.wrong.content"),
+          false);
+    }
+  }
+
+  bool _urlIsOk(url, context) {
+    if (url.length - url.replaceAll(":", "").length > 2) {
       SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
           context,
           AppLocalizations.of(global.context)
               .getText("remote.ipv6.not.supported"),
           false));
+      return false;
+    } else if (!url.replaceFirst("://", "").contains(":")) {
+      SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
+          context,
+          AppLocalizations.of(global.context).getText("remote.port.needed"),
+          false));
+      return false;
+    }
+    return true;
+  }
+
+  void _failedConnectingDialog(bool autoConnect, BuildContext context) {
+    if (autoConnect) {
+      DownloadHandler().autoConnect(context);
     } else {
-      SchedulerBinding.instance
-          .addPostFrameCallback((_) => _showLoadingIndicator(context));
-      global.url = url;
-      _testConnection(url).then((onValue) {
-        SchedulerBinding.instance.addPostFrameCallback(
-            (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
-        if (onValue["code"] == 200) {
-          global.syncHandler.isConnected = true;
-          if (onValue["data"].toString().contains("password")) {
-            showInputDialog(
-                context,
-                AppLocalizations.of(global.context)
-                    .getText("remote.control.password"),
-                true);
-          } else if (onValue["data"].toString().contains("logobutton")) {
-            Scaffold.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 3),
-              content: Text(AppLocalizations.of(global.context)
-                  .getText("remote.connected")),
-            ));
-            PrefService.setString("server_url", url);
-            FocusScope.of(context).requestFocus(global.focusNode);
-            global.syncHandler.start();
-            download("$url/serverversion", (response) {
-              if (response
-                  .toString()
-                  .contains("apple-mobile-web-app-capable")) {
-                global.serverVersion = 2020.0;
-              } else {
-                global.serverVersion = double.parse(response.toString());
-              }
-            });
-          } else {
-            showInputDialog(
-                context,
-                AppLocalizations.of(global.context)
-                    .getText("remote.wrong.content"),
-                false);
-          }
-        } else {
-          SchedulerBinding.instance.addPostFrameCallback(
-              (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
-          showInputDialog(
-              context,
-              AppLocalizations.of(global.context)
-                  .getText("remote.failed.finding.server"),
-              false);
-        }
-      }).catchError((onError) {
-        SchedulerBinding.instance.addPostFrameCallback(
-            (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
-        print("Catch error: " + onError.toString());
-        showInputDialog(
-            context,
-            AppLocalizations.of(global.context)
-                .getText("remote.failed.finding.server"),
-            false);
-      });
+      SchedulerBinding.instance.addPostFrameCallback(
+          (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
+      showInputDialog(
+          context,
+          AppLocalizations.of(global.context)
+              .getText("remote.failed.finding.server"),
+          false);
     }
   }
 
@@ -220,8 +229,6 @@ class DownloadHandler {
   }
 
   void autoConnect(BuildContext context) async {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => _showLoadingIndicator(context));
     if (await (Connectivity().checkConnectivity()) == ConnectivityResult.wifi) {
       var wifiIP = await (Connectivity().getWifiIP());
       final stream = NetworkAnalyzer.discover2(
@@ -235,7 +242,7 @@ class DownloadHandler {
               remoteUrl =
                   addr.ip + remoteUrl.substring(remoteUrl.lastIndexOf(":"));
             }
-            testConnection(remoteUrl, context);
+            testConnection(remoteUrl, context, false);
           });
         }
       });
@@ -257,21 +264,23 @@ class DownloadHandler {
     return {"code": response.statusCode, "data": data};
   }
 
-  void _showLoadingIndicator(BuildContext context) {
-    global.scaffoldKey.currentState.hideCurrentSnackBar();
-    global.scaffoldKey.currentState.showSnackBar(
-      SnackBar(
-        duration: Duration(seconds: 90),
-        content: Row(
-          children: <Widget>[
-            CircularProgressIndicator(),
-            Padding(padding: EdgeInsets.all(16)),
-            Text(
-                "${AppLocalizations.of(global.context).getText("loading.text")}...")
-          ],
+  void showLoadingIndicator(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      global.scaffoldKey.currentState.hideCurrentSnackBar();
+      global.scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 30),
+          content: Row(
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Padding(padding: EdgeInsets.all(16)),
+              Text(
+                  "${AppLocalizations.of(global.context).getText("loading.text")}...")
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void _showSignalFailedSnackbar() {

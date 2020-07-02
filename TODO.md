@@ -9,9 +9,9 @@
 - [x] An entire chapter can't be added without manually setting the verses
 - [x] The view isn't cleared if the connection is lost
 - [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
-- [ ] Stored URL should be checked before auto-connecting
-- [ ] Loading opened sometimes again after connected
-- [ ] Back button doesn't work in settings
+- [x] Stored URL should be checked before auto-connecting
+- [x] Loading opened sometimes again after connected
+- [ ] Back button doesn't work sometimes
 
 ## Features
 - [x] Connecting to a server

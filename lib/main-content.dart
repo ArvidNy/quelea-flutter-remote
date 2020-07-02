@@ -145,11 +145,9 @@ class _MainState extends State<MainPage> {
   Widget build(BuildContext context) {
     global.context = context;
     if (!global.syncHandler.isConnected) {
-      if (PrefService.getBool("use_autoconnect") ?? false) {
-        DownloadHandler().autoConnect(context);
-      } else {
-        DownloadHandler().testConnection(global.url, context);
-      }
+      DownloadHandler().showLoadingIndicator(context);
+      DownloadHandler().testConnection(
+          global.url, context, PrefService.getBool("use_autoconnect") ?? true);
     }
     global.syncHandler.setFunctions(_setLiveItem, _setSchedule, _setStatus);
     Map<String, Function> settingsStateFunctions = <String, Function>{

@@ -22,7 +22,8 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
         _sendPassword(input);
       } else {
         if (Navigator.canPop(global.context)) Navigator.pop(global.context);
-        DownloadHandler().testConnection(input, global.context);
+        DownloadHandler().showLoadingIndicator(global.context);
+        DownloadHandler().testConnection(input, global.context, false);
       }
     },
   );
@@ -62,6 +63,8 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
                       child: Text(AppLocalizations.of(context)
                           .getText("remote.search.server")),
                       onPressed: () {
+                        if (Navigator.canPop(global.context)) Navigator.pop(global.context);
+                        DownloadHandler().showLoadingIndicator(context);
                         DownloadHandler().autoConnect(global.context);
                       },
                     ),
@@ -71,7 +74,8 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
                   if (isPassword) {
                     _sendPassword(input);
                   } else {
-                    DownloadHandler().testConnection(input, global.context);
+                    DownloadHandler().showLoadingIndicator(context);
+                    DownloadHandler().testConnection(input, global.context, false);
                   }
                 },
               ),
@@ -85,5 +89,5 @@ void showInputDialog(BuildContext context, String message, bool isPassword) {
 void _sendPassword(String password) async {
   if (Navigator.canPop(global.context)) Navigator.pop(global.context);
   await DownloadHandler().postPassword(global.url, password);
-  DownloadHandler().testConnection(global.url, global.context);
+  DownloadHandler().testConnection(global.url, global.context, false);
 }

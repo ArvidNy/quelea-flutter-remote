@@ -18,17 +18,19 @@ class MainActivity : FlutterActivity() {
     private var doubleClick: Long = 0
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (isUseVolume()) {
-            return when (keyCode) {
-                KeyEvent.KEYCODE_VOLUME_UP -> {
-                    event.startTracking()
-                    true
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (isUseVolume()) {
+                return when (keyCode) {
+                    KeyEvent.KEYCODE_VOLUME_UP -> {
+                        event.startTracking()
+                        true
+                    }
+                    KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                        event.startTracking()
+                        true
+                    }
+                    else -> false
                 }
-                KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                    event.startTracking()
-                    true
-                }
-                else -> false
             }
         }
         return super.onKeyDown(keyCode, event)
@@ -56,47 +58,49 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (isUseVolume()) {
-            if (!longPress && keyCode != 26) clickCount++
-            returnState = false
-            val handler = Handler()
-            val r = Runnable {
-                if (clickCount == 1) {
-                    singleClick = System.currentTimeMillis()
-                    val diff: Long = singleClick - doubleClick
-                    if (diff > 300) {
-                        returnState = true
-                        sendSlideAction(keyCode)
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            if (isUseVolume()) {
+                if (!longPress && keyCode != 26) clickCount++
+                returnState = false
+                val handler = Handler()
+                val r = Runnable {
+                    if (clickCount == 1) {
+                        singleClick = System.currentTimeMillis()
+                        val diff: Long = singleClick - doubleClick
+                        if (diff > 300) {
+                            returnState = true
+                            sendSlideAction(keyCode)
+                        }
                     }
+                    clickCount = 0
                 }
-                clickCount = 0
+                if (clickCount == 1) {
+                    // Single click
+                    if (doubleClicked) doubleClicked = false
+                    handler.postDelayed(r, 150)
+                } else if (clickCount == 2) {
+                    // Double click
+                    doubleClick = System.currentTimeMillis()
+                    doubleClicked = true
+                    if (isUseVolume()
+                            && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+                        when (getDoublePressAction()) {
+                            "slide" -> sendAction("next")
+                            "item" -> sendAction("nextitem")
+                            "clear" -> sendAction("clear")
+                            "black" -> sendAction("black")
+                            "logo" -> sendAction("tlogo")
+                            "nothing" -> return false
+                        }
+                    } else returnState = false
+                    clickCount = 0
+                    returnState = true
+                }
+                if (longPress) {
+                    longPress = false
+                }
+                return returnState
             }
-            if (clickCount == 1) {
-                // Single click
-                if (doubleClicked) doubleClicked = false
-                handler.postDelayed(r, 150)
-            } else if (clickCount == 2) {
-                // Double click
-                doubleClick = System.currentTimeMillis()
-                doubleClicked = true
-                if (isUseVolume()
-                        && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
-                    when (getDoublePressAction()) {
-                        "slide" -> sendAction("next")
-                        "item" -> sendAction("nextitem")
-                        "clear" -> sendAction("clear")
-                        "black" -> sendAction("black")
-                        "logo" -> sendAction("tlogo")
-                        "nothing" -> return false
-                    }
-                } else return false
-                clickCount = 0
-                returnState = true
-            }
-            if (longPress) {
-                longPress = false
-            }
-            return returnState
         }
         return super.onKeyUp(keyCode, event)
     }

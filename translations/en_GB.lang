@@ -748,3 +748,4 @@ remote.donations.link=Donate
 remote.needs.newer.version=This feature needs the server to run Quelea $1 or above
 remote.source.code=Source code
 remote.send.notice.tooltip=Add a notice
+remote.signal.failed=Failed sending the signal to the server

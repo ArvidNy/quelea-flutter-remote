@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
           },
           onChange: () {
             // Does not work at the moment
-            DownloadHandler().testConnection(global.url, context);
+            DownloadHandler().testConnection(global.url, context, false);
           },
         ),
         CheckboxPreference(
