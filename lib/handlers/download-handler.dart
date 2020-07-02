@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -32,18 +33,14 @@ class DownloadHandler {
   /// Note: Some URLs will return specific items, such as
   /// `"/lyrics"` (`LiveItem`) or `"/schedule"` (`ScheduleList`).
   /// See the method `_parseData` for more info.
-  /// 
+  ///
   /// This method should only be used when a server response is
   /// expected. Use `sendSignal` otherwise.
   Future download(String urlString, Function update) async {
     if (global.debug) print(urlString);
     try {
-      var url = Uri.parse(urlString);
-      var httpClient = HttpClient();
-      var request = await httpClient.getUrl(url);
-      var response = await request.close();
-      var data = await utf8.decoder.bind(response).toList();
-      _parseData(data, urlString, update);
+      var data = await http.get(urlString);
+      if (data.statusCode == 200) _parseData(utf8.decode(data.bodyBytes), urlString, update);
       connectionFailed = 0;
     } catch (exception) {
       if (urlString.contains("lyrics")) connectionFailed++;
@@ -88,33 +85,37 @@ class DownloadHandler {
     }
   }
 
-  void _parseData(List<String> data, String urlString, Function update) {
-    if (urlString.contains("lyrics"))
-      update(LiveItem(data.toString()));
-    else if (urlString.contains("schedule"))
-      update(parser.getSchedule(data.join()));
-    else if (urlString.contains("status")) {
-      global.statusHandler.parseStatus(data.join());
+  void _parseData(String data, String urlString, Function update) {
+    if (urlString.contains("lyrics")) {
+      if (global.tempLyrics != data) {
+        global.tempLyrics = data;
+        update(LiveItem(data));
+      }
+    } else if (urlString.contains("schedule")) {
+      if (global.tempSchedule != data) {
+        update(parser.getSchedule(data));
+        global.tempSchedule = data;
+      }
+    } else if (urlString.contains("status")) {
+      if (global.tempStatus != data) {
+        global.statusHandler.parseStatus(data);
+        global.tempStatus = data;
+      }
       update(global.statusHandler);
     } else if (urlString.contains("search")) {
-      parser.getSearchResults(data.join());
-    } else if (urlString.contains("translations") ||
-        urlString.contains("books")) {
-      update(data.join());
-    } else if (urlString.contains("getthemes")) {
-      update(data.join());
+      parser.getSearchResults(data);
     } else if (urlString.contains("song")) {
-      update(parser.getText(data.join(), ["a"]));
+      update(parser.getText(data, ["a"]));
     } else if (urlString.contains("addbible")) {
       global.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 3),
-          content: Text(data.join()),
+          content: Text(data),
         ),
       );
       update();
     } else {
-      update(data.join());
+      update(data);
     }
   }
 
@@ -146,7 +147,8 @@ class DownloadHandler {
     } else if (url.length - url.replaceAll(":", "").length > 2) {
       SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
           context,
-          AppLocalizations.of(global.context).getText("remote.ipv6.not.supported"),
+          AppLocalizations.of(global.context)
+              .getText("remote.ipv6.not.supported"),
           false));
     } else {
       SchedulerBinding.instance
@@ -218,6 +220,8 @@ class DownloadHandler {
   }
 
   void autoConnect(BuildContext context) async {
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => _showLoadingIndicator(context));
     if (await (Connectivity().checkConnectivity()) == ConnectivityResult.wifi) {
       var wifiIP = await (Connectivity().getWifiIP());
       final stream = NetworkAnalyzer.discover2(
@@ -228,7 +232,8 @@ class DownloadHandler {
             String remoteUrl = html.toString().split("\n")[1];
             // Avoid issues with unsupported IPv6
             if (remoteUrl.length - remoteUrl.replaceAll(":", "").length > 2) {
-              remoteUrl = addr.ip + remoteUrl.substring(remoteUrl.lastIndexOf(":"));
+              remoteUrl =
+                  addr.ip + remoteUrl.substring(remoteUrl.lastIndexOf(":"));
             }
             testConnection(remoteUrl, context);
           });
@@ -249,7 +254,7 @@ class DownloadHandler {
     var request = await httpClient.getUrl(url);
     var response = await request.close();
     var data = await utf8.decoder.bind(response).toList();
-    return {"code": response.statusCode, "data": data.join()};
+    return {"code": response.statusCode, "data": data};
   }
 
   void _showLoadingIndicator(BuildContext context) {
@@ -273,7 +278,8 @@ class DownloadHandler {
     global.scaffoldKey.currentState.hideCurrentSnackBar();
     global.scaffoldKey.currentState.showSnackBar(SnackBar(
       duration: Duration(seconds: 3),
-      content: Text(AppLocalizations.of(global.context).getText("remote.signal.failed")),
+      content: Text(
+          AppLocalizations.of(global.context).getText("remote.signal.failed")),
     ));
   }
 }

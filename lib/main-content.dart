@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:indexed_list_view/indexed_list_view.dart';
 import 'package:preferences/preferences.dart';
 
 import './dialogs/bible-dialog.dart';
@@ -39,7 +38,7 @@ class _MainState extends State<MainPage> {
   bool _isClear = false;
   bool _isRecord = false;
   LiveItem _liveItem = LiveItem("");
-  final _itemScrollController = IndexedScrollController();
+  final _itemScrollController = ScrollController();
   StreamController<bool> _isLightTheme;
 
   bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
@@ -104,27 +103,28 @@ class _MainState extends State<MainPage> {
   }
 
   void _setLiveItem(LiveItem liveItem) async {
-    if (this._liveItem.titleText != liveItem.titleText ||
-        this._liveItem.activeSlide != liveItem.activeSlide ||
-        !listEquals(this._liveItem.lyrics, liveItem.lyrics)) {
-      // Workaround for images getting cached between two presentations and the wrong image appearing
-      if (this._liveItem.isPresentation &&
-          liveItem.isPresentation &&
-          this._liveItem.titleText != liveItem.titleText) {
-        setState(() {
-          this._liveItem = LiveItem("");
-          PaintingBinding.instance.imageCache.clear();
-          Future.delayed(Duration(milliseconds: 1000)).then((value) {
-            this._liveItem = liveItem;
-            _itemScrollController.jumpToIndex(liveItem.activeSlide);
-          });
-        });
-      } else {
-        setState(() {
+    bool newItem = this._liveItem.titleText != liveItem.titleText;
+    double offset =
+        _itemScrollController.hasClients ? _itemScrollController.offset : 0;
+    if (newItem) offset = 0;
+
+    // Workaround for images getting cached between two presentations and the wrong image appearing
+    if (this._liveItem.isPresentation &&
+        liveItem.isPresentation &&
+        this._liveItem.titleText != liveItem.titleText) {
+      setState(() {
+        this._liveItem = LiveItem("");
+        PaintingBinding.instance.imageCache.clear();
+        Future.delayed(Duration(milliseconds: 1000)).then((value) {
           this._liveItem = liveItem;
-          _itemScrollController.jumpToIndex(liveItem.activeSlide);
+          _itemScrollController.jumpTo(offset);
         });
-      }
+      });
+    } else {
+      setState(() {
+        this._liveItem = liveItem;
+        _itemScrollController.jumpTo(offset);
+      });
     }
   }
 

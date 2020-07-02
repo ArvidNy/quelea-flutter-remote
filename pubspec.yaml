@@ -19,6 +19,7 @@ dependencies:
   connectivity: ^0.4.8+6
   ping_discover_network: ^0.2.0+1
   indexed_list_view: ^1.0.9
+  http: ^0.12.1
 
 dev_dependencies:
   flutter_test:

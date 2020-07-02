@@ -9,7 +9,7 @@ import '../objects/status-item.dart';
 // Global variables
 String url = PrefService.getString('server_url') ?? "http://192.168.0.1:1112";
 BuildContext context;
-bool debug = true;
+bool debug = false;
 SyncHandler syncHandler = new SyncHandler();
 final scaffoldKey = GlobalKey<ScaffoldState>();
 BuildContext drawerContext;
@@ -18,6 +18,9 @@ StatusItem statusHandler = StatusItem();
 double serverVersion = 2020.0;
 Map<String, String> lang = {};
 final FocusNode focusNode = FocusNode();
+String tempLyrics = "";
+String tempSchedule = "";
+String tempStatus = "";
 List<String> supportedLanguages = [
   'en_GB',
   'en_US',

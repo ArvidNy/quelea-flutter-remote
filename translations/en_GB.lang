@@ -709,12 +709,12 @@ remote.dpad.navigation.description=Use dpad buttons (up/down) to navigate to nex
 remote.swipe.navigation.title=Swipe navigation
 remote.swipe.navigation.description=Choose what should happen if you swipe left or right on the screen.
 remote.auto.progress.item=Progress to next/previous item
-remote.auto.progress.clear=Hide text with clear button
-remote.auto.progress.logo=Hide text and show logo
-remote.auto.progress.black=Hide text with black screen
+remote.action.clear=Hide text with clear button
+remote.action.logo=Hide text and show logo
+remote.action.black=Hide text with black screen
 remote.action.nothing=Do nothing
-remote.swipe.navigation.item=Move to next/previous item
-remote.swipe.navigation.slide=Move to next/previous slide
+remote.action.item=Move to next/previous item
+remote.action.slide=Move to next/previous slide
 remote.disable.record=Disable the record button
 remote.about.title=About this app
 remote.choose.action=Choose action for $1
@@ -724,6 +724,13 @@ remote.about.text.app=This app is a non-profit app made to use with the open sou
 remote.about.text.support=Feel free to send me an email at arvid @ quelea.org if you have any questions or are experiencing issues, but make sure you've started Quelea before the app (with both servers active), that both devices are connected to same network and that you've entered the correct URL first.
 remote.about.text.responsibility=I cannot guarantee a flawless experience, so I will not take responsibility for any issues that could occur in a live setting.
 remote.ipv6.not.supported=Unfortunately you can't use IPv6 addresses. You need to use an IPv4 address to be able to use this app. If you don't know how to find it, google 'find local ip' and the name of your operating system. Enter the IPv4 address/URL below.
+remote.on.end.title=Item end/beginning action
+remote.on.end.description=Select what you want the app to do when you navigate with either of the two options above and reach the end/beginning of an item.
+remote.long.press.description=Select what you want to happen if you long-press a button when you are navigating with either of the two options above. Note that this won\'t work with AirTurn pedals.
+remote.long.press.title=Long-press action
+remote.double.press.title=Double press action
+remote.double.press.description=Select what you want to happen if you press two buttons at the same time when you are navigating with either of the two options above.
+
 
 -- New labels --
 remote.select.chapter.verses=Select chapter and verse(s)

@@ -2,7 +2,6 @@
 
 ## Bugs
 - [?] The dialog sometimes appears even though the server URL automatically has been found
-- [x] Automatic scroll to slide doesn't work if slide actions are activated
 - [x] Bounce on last items on iOS
 - [x] IPv6 addresses should be ignored
 - [x] Dark theme search text isn't visible
@@ -10,6 +9,9 @@
 - [x] An entire chapter can't be added without manually setting the verses
 - [x] The view isn't cleared if the connection is lost
 - [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
+- [ ] Stored URL should be checked before auto-connecting
+- [ ] Loading opened sometimes again after connected
+- [ ] Back button doesn't work in settings
 
 ## Features
 - [x] Connecting to a server
@@ -43,7 +45,7 @@
     - [x] Swipe navigation
     - [x] Volume navigation (Android)
         - [x] Override volume change
-        - [ ] Add extra options
+        - [x] Add extra options
     - [?] Dpad navigation
     - [?] Timeout length
     - [x] Dark theme
@@ -65,9 +67,15 @@
 - [?] Search help
 - [x] Section titles
 - [x] Keyboard shortcuts (Android, no support for iOS yet)
+    - [ ] Numlock buttons
+    - [ ] Verse titles
+    - [ ] Opening search
+    - [ ] Opening schedule
 - [x] Message if sending a signal failed
 - [x] Bible add and go live
 - [x] Ask to exit on back (Android)
 - [x] Open/close drawer with back (Android)
 - [?] Add support for ChromeBook (Android)
+- [ ] Automatic scroll to always show the active slide
+- [ ] Keep screen alive
 - [ ] Crash handling

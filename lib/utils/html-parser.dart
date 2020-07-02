@@ -32,7 +32,7 @@ List<String> _getLyricSlides(Document document, List<String> slides) {
       for (Element line in s.getElementsByClassName("lyric")) {
         slide += line.text + "\n";
       }
-      slides.add(slide.trim());
+      slides.add(slide.trimRight());
     }
   }
   return slides;

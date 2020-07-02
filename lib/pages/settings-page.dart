@@ -8,11 +8,6 @@ import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
 /// A page for setting the user options.
-///
-/// Note: A lot of the settings are currently
-/// disabled as the features are not yet
-/// implemented in this beta version.
-/// It's on the TODO list.
 class SettingsPage extends StatefulWidget {
   SettingsPage({Key key, this.title, this.settingsFunctions}) : super(key: key);
 
@@ -75,14 +70,85 @@ class _SettingsPageState extends State<SettingsPage> {
         // ),
         PreferenceTitle(AppLocalizations.of(global.context)
             .getText('remote.navigation.settings.title')),
-        Platform.isAndroid ? CheckboxPreference(
+        DropdownPreference(
           AppLocalizations.of(global.context)
-              .getText('remote.enable.volume.navigation'),
-          'use_volume_navigation',
+              .getText('remote.swipe.navigation.title'),
+          'swipe_navigation_action',
           desc: AppLocalizations.of(global.context)
-              .getText("remote.volume.navigation.description"),
+              .getText("remote.swipe.navigation.description"),
+          defaultVal: 'off',
+          values: ['off', 'slide', 'item'],
+          displayValues: [
+            AppLocalizations.of(global.context)
+                .getText('remote.action.nothing'),
+            AppLocalizations.of(global.context).getText('remote.action.slide'),
+            AppLocalizations.of(global.context).getText('remote.action.item')
+          ],
           disabled: false,
-        ) : Container(),
+          onChange: (change) {
+            settingsFunctions['swipe'](
+                !PrefService.getString("swipe_navigation_action")
+                    .contains("off"));
+            print(PrefService.getString("swipe_navigation_action"));
+          },
+        ),
+        Platform.isAndroid
+            ? CheckboxPreference(
+                AppLocalizations.of(global.context)
+                    .getText('remote.enable.volume.navigation'),
+                'use_volume_navigation',
+                desc: AppLocalizations.of(global.context)
+                    .getText("remote.volume.navigation.description"),
+                disabled: false,
+                onChange: () {
+                  setState(() {});
+                },
+              )
+            : Container(),
+        PreferenceHider([
+          DropdownPreference(
+            AppLocalizations.of(global.context)
+                .getText('remote.long.press.title'),
+            'long_volume_action',
+            desc: AppLocalizations.of(global.context)
+                .getText("remote.long.press.description"),
+            defaultVal: 'nothing',
+            values: ['nothing', 'slide', 'item', 'logo', 'clear', 'black'],
+            displayValues: [
+              AppLocalizations.of(global.context)
+                  .getText('remote.action.nothing'),
+              AppLocalizations.of(global.context)
+                  .getText('remote.action.slide'),
+              AppLocalizations.of(global.context).getText('remote.action.item'),
+              AppLocalizations.of(global.context).getText('remote.action.logo'),
+              AppLocalizations.of(global.context)
+                  .getText('remote.action.clear'),
+              AppLocalizations.of(global.context).getText('remote.action.black')
+            ],
+            disabled: false,
+          ),
+          DropdownPreference(
+            AppLocalizations.of(global.context)
+                .getText('remote.double.press.title'),
+            'double_volume_action',
+            desc: AppLocalizations.of(global.context)
+                .getText("remote.double.press.description"),
+            defaultVal: 'nothing',
+            values: ['nothing', 'slide', 'item', 'logo', 'clear', 'black'],
+            displayValues: [
+              AppLocalizations.of(global.context)
+                  .getText('remote.action.nothing'),
+              AppLocalizations.of(global.context)
+                  .getText('remote.action.slide'),
+              AppLocalizations.of(global.context).getText('remote.action.item'),
+              AppLocalizations.of(global.context).getText('remote.action.logo'),
+              AppLocalizations.of(global.context)
+                  .getText('remote.action.clear'),
+              AppLocalizations.of(global.context).getText('remote.action.black')
+            ],
+            disabled: false,
+          ),
+        ], '!use_volume_navigation'),
         // Does keyboard shortcuts have to be optional?
         // CheckboxPreference(
         //   AppLocalizations.of(global.context).getText('remote.enable.dpad.navigation'),
@@ -97,40 +163,10 @@ class _SettingsPageState extends State<SettingsPage> {
         //     PrefService.setBool('exp_showos', false);
         //   },
         // ),
-        DropdownPreference(
-          AppLocalizations.of(global.context)
-              .getText('remote.swipe.navigation.title'),
-          'swipe_navigation_action',
-          desc: AppLocalizations.of(global.context)
-              .getText("remote.swipe.navigation.description"),
-          defaultVal: 'off',
-          values: ['off', 'slide', 'item'],
-          displayValues: [
-            AppLocalizations.of(global.context).getText('remote.action.nothing'),
-            AppLocalizations.of(global.context).getText('remote.swipe.navigation.slide'),
-            AppLocalizations.of(global.context).getText('remote.swipe.navigation.item')
-          ],
-          disabled: false,
-          onChange: (change) {
-            settingsFunctions['swipe'](
-                !PrefService.getString("swipe_navigation_action")
-                    .contains("off"));
-            print(PrefService.getString("swipe_navigation_action"));
-          },
-        ),
-        PreferenceHider([
-          PreferenceTitle('Experimental'),
-          SwitchPreference(
-            'Show Operating System',
-            'exp_showos',
-            desc: 'This option shows the users operating system in his profile',
-          )
-        ], '!advanced_enabled'),
-        PreferenceTitle(
-            AppLocalizations.of(global.context).getText('general.options.heading')),
+        PreferenceTitle(AppLocalizations.of(global.context)
+            .getText('general.options.heading')),
         CheckboxPreference(
-          AppLocalizations.of(global.context)
-              .getText('remote.disable.record'),
+          AppLocalizations.of(global.context).getText('remote.disable.record'),
           'disable_record',
           disabled: false,
           defaultVal: false,
@@ -152,8 +188,8 @@ class _SettingsPageState extends State<SettingsPage> {
               (PrefService.getString("app_theme") ?? "light")
                   .contains("light")),
         ),
-        PreferenceTitle(
-            AppLocalizations.of(global.context).getText('remote.information.title')),
+        PreferenceTitle(AppLocalizations.of(global.context)
+            .getText('remote.information.title')),
         PreferencePageLink(
           AppLocalizations.of(global.context).getText('help.menu.about'),
           leading: Icon(Icons.info),
@@ -169,7 +205,8 @@ class _SettingsPageState extends State<SettingsPage> {
               onTap: () => global.launchURL("https://quelea.discourse.group/"),
             ),
             PreferenceText(
-              AppLocalizations.of(global.context).getText("remote.report.issue"),
+              AppLocalizations.of(global.context)
+                  .getText("remote.report.issue"),
               onTap: () => global.launchURL(
                   "https://github.com/arvidny/quelea-flutter-remote/issues"),
             ),
@@ -179,17 +216,20 @@ class _SettingsPageState extends State<SettingsPage> {
               onTap: () => global.launchURL("https://quelea.org/lang"),
             ),
             PreferenceText(
-              AppLocalizations.of(global.context).getText("remote.privacy.policy"),
+              AppLocalizations.of(global.context)
+                  .getText("remote.privacy.policy"),
               onTap: () => global.launchURL(
                   "https://quelea-projection.github.io/docs/Android_Applications_Privacy_Policy"),
             ),
             PreferenceText(
-              AppLocalizations.of(global.context).getText("remote.donations.link"),
+              AppLocalizations.of(global.context)
+                  .getText("remote.donations.link"),
               onTap: () => global.launchURL("https://paypal.me/ArvidNy"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("help.menu.facebook"),
-              onTap: () => global.launchURL("https://facebook.com/quelea.projection"),
+              onTap: () =>
+                  global.launchURL("https://facebook.com/quelea.projection"),
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("help.menu.website"),
@@ -197,7 +237,8 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             PreferenceText(
               AppLocalizations.of(global.context).getText("remote.source.code"),
-              onTap: () => global.launchURL("https://github.com/ArvidNy/quelea-flutter-remote"),
+              onTap: () => global.launchURL(
+                  "https://github.com/ArvidNy/quelea-flutter-remote"),
             ),
           ]),
         ),
@@ -208,20 +249,20 @@ class _SettingsPageState extends State<SettingsPage> {
   _showAboutDialog(BuildContext context) {
     showAboutDialog(
         context: context,
-        applicationName:
-            AppLocalizations.of(global.context).getText("remote.control.app.name"),
+        applicationName: AppLocalizations.of(global.context)
+            .getText("remote.control.app.name"),
         applicationVersion: "0.1.0",
         applicationLegalese: "© Quelea 2020",
         applicationIcon: Image.asset("images/ic_launcher.png"),
         children: <Widget>[
-          Text(AppLocalizations.of(global.context).getText(
-              "remote.about.text.app")),
+          Text(AppLocalizations.of(global.context)
+              .getText("remote.about.text.app")),
           Text("\n"),
-          Text(AppLocalizations.of(global.context).getText(
-              "remote.about.text.support")),
+          Text(AppLocalizations.of(global.context)
+              .getText("remote.about.text.support")),
           Text("\n"),
-          Text(AppLocalizations.of(global.context).getText(
-              "remote.about.text.responsibility"))
+          Text(AppLocalizations.of(global.context)
+              .getText("remote.about.text.responsibility"))
         ]);
   }
 }
