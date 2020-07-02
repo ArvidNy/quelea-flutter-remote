@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
+import 'package:wakelock/wakelock.dart';
 
 import './main-content.dart';
 import './utils/global-utils.dart' as global;
@@ -21,6 +22,7 @@ class QueleaMobileRemote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     setGlobals(context);
+    Wakelock.enable();
     return StreamBuilder<bool>(
         initialData: true,
         stream: isLightTheme.stream,

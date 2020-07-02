@@ -77,5 +77,5 @@
 - [x] Open/close drawer with back (Android)
 - [?] Add support for ChromeBook (Android)
 - [ ] Automatic scroll to always show the active slide
-- [ ] Keep screen alive
+- [x] Keep screen alive
 - [ ] Crash handling
