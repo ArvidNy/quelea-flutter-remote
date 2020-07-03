@@ -600,3 +600,6 @@ remote.about.text.app=Tato aplikacia je nezisková Zrobená k použitie s progra
 remote.about.text.support=Niehambitese poslat vívojárovy email (v Angličtině) na arvid @ quelea.org aj keď máte otázky či niejaké problémy, ale ujistiete se že Quelea funguje pred tím ak aplikacia (a oba servery sů funkčné), a že obe zariaděnia sů tej istej sieti a zadaly jste správnú adresu
 remote.about.text.responsibility=Nelze garantovať perfeknú funkčnosť. Takže niemožem ručť za akykolvek problém který sa v reálu prejeví.
 remote.ipv6.not.supported=Bohuž nelze použít IPv6 adresu. Je treba ipv4 adresa aby išlo použít aplikaciu. Pokud nevieš ako to nalezť vygoogluj " najisť mistnu adressu spolu s menom operačného sustena  a vlož adesu tu:
+remote.long.press.title=akce pri dlhom slačenie
+remote.double.press.title=Akce pri dvojtom stlačenie
+remote.on.end.title=Akcia na konci/začiatku položky

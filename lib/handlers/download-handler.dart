@@ -108,7 +108,7 @@ class DownloadHandler {
     } else if (urlString.contains("song")) {
       update(parser.getText(data, ["a"]));
     } else if (urlString.contains("addbible")) {
-      global.scaffoldKey.currentState.showSnackBar(
+      global.mainScaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 3),
           content: Text(data),
@@ -156,7 +156,7 @@ class DownloadHandler {
 
   void _handleTestResults(
       onValue, BuildContext context, bool autoConnect, String url) {
-    global.scaffoldKey.currentState.hideCurrentSnackBar();
+    global.mainScaffoldKey.currentState.hideCurrentSnackBar();
     if (onValue["data"].toString().contains("password")) {
       showInputDialog(
           context,
@@ -212,7 +212,7 @@ class DownloadHandler {
       DownloadHandler().autoConnect(context);
     } else {
       SchedulerBinding.instance.addPostFrameCallback(
-          (_) => global.scaffoldKey.currentState.hideCurrentSnackBar());
+          (_) => global.mainScaffoldKey.currentState.hideCurrentSnackBar());
       showInputDialog(
           context,
           AppLocalizations.of(global.context)
@@ -266,8 +266,8 @@ class DownloadHandler {
 
   void showLoadingIndicator(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      global.scaffoldKey.currentState.hideCurrentSnackBar();
-      global.scaffoldKey.currentState.showSnackBar(
+      global.mainScaffoldKey.currentState.hideCurrentSnackBar();
+      global.mainScaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 30),
           content: Row(
@@ -284,8 +284,8 @@ class DownloadHandler {
   }
 
   void _showSignalFailedSnackbar() {
-    global.scaffoldKey.currentState.hideCurrentSnackBar();
-    global.scaffoldKey.currentState.showSnackBar(SnackBar(
+    global.mainScaffoldKey.currentState.hideCurrentSnackBar();
+    global.mainScaffoldKey.currentState.showSnackBar(SnackBar(
       duration: Duration(seconds: 3),
       content: Text(
           AppLocalizations.of(global.context).getText("remote.signal.failed")),

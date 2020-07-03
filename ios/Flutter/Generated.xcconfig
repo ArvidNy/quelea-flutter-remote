@@ -9,3 +9,4 @@ FLUTTER_FRAMEWORK_DIR=/Users/arvid/Documents/Programmering/flutter/bin/cache/art
 FLUTTER_BUILD_NAME=0.1.0
 FLUTTER_BUILD_NUMBER=0.1.0
 TRACK_WIDGET_CREATION=true
+DART_DEFINES=flutter.inspector.structuredErrors=true

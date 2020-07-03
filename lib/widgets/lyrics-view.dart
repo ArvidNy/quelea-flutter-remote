@@ -20,7 +20,7 @@ class LyricsView extends StatelessWidget {
         Expanded(
           child: ListView.builder(
             controller: scrollController,
-            itemCount: liveItem.lyrics.length,
+            itemCount: liveItem.itemSlides.length,
             itemBuilder: (context, index) {
               return InkWell(
                 child: liveItem.getSlide(index),
@@ -35,7 +35,6 @@ class LyricsView extends StatelessWidget {
 
   void _lyricsItemClick(int index, LiveItem liveItem) {
     if (liveItem.isMedia) {
-      print(liveItem.lyrics.toString());
       DownloadHandler().sendSignal(url + "/play", () => {});
     } else {
       DownloadHandler()

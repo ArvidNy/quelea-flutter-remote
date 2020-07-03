@@ -1,7 +1,7 @@
 # List of features to implement and bugs left to sort out
 
 ## Bugs
-- [?] The dialog sometimes appears even though the server URL automatically has been found
+- [x] The dialog sometimes appears even though the server URL automatically has been found
 - [x] Bounce on last items on iOS
 - [x] IPv6 addresses should be ignored
 - [x] Dark theme search text isn't visible
@@ -11,7 +11,7 @@
 - [x] The lyrics view sometime fail to load the first view with the `ScrollablePositionedList` and the view must be reloaded
 - [x] Stored URL should be checked before auto-connecting
 - [x] Loading opened sometimes again after connected
-- [ ] Back button doesn't work sometimes
+- [x] Back button doesn't work sometimes
 
 ## Features
 - [x] Connecting to a server
@@ -46,8 +46,8 @@
     - [x] Volume navigation (Android)
         - [x] Override volume change
         - [x] Add extra options
-    - [?] Dpad navigation
-    - [?] Timeout length
+    - [ ] ~~Dpad navigation~~
+    - [ ] ~~Timeout length~~
     - [x] Dark theme
     - [x] Disable the recording button
     - [x] About page
@@ -57,6 +57,7 @@
     - [x] Facebook link
     - [x] Source code link
     - [x] Website link
+    - [ ] Keyboard shortcut information
 - [x] Scroll to current slide
 - [x] Removing items from the schedule
 - [x] Moving items in the schedule
@@ -64,18 +65,19 @@
 - [x] Notice quick add (future feature in Quelea 2020.1)
 - [x] Troubleshooting guide
 - [x] Multiple language support
-- [?] Search help
+- [ ] ~~Search help~~
 - [x] Section titles
 - [x] Keyboard shortcuts (Android, no support for iOS yet)
-    - [ ] Numlock buttons
-    - [ ] Verse titles
-    - [ ] Opening search
-    - [ ] Opening schedule
+    - [x] Numlock buttons
+    - [x] Verse titles
+    - [x] Opening search
+    - [x] Opening schedule
 - [x] Message if sending a signal failed
 - [x] Bible add and go live
 - [x] Ask to exit on back (Android)
 - [x] Open/close drawer with back (Android)
-- [?] Add support for ChromeBook (Android)
-- [ ] Automatic scroll to always show the active slide
+- [x] Add support for ChromeBook (Android)
 - [x] Keep screen alive
+- [ ] Keyboard shortcuts for iOS
+- [ ] Automatic scroll to always show the active slide
 - [ ] Crash handling

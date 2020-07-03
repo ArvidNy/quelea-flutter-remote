@@ -11,8 +11,8 @@ String url = PrefService.getString('server_url') ?? "http://192.168.0.1:1112";
 BuildContext context;
 bool debug = false;
 SyncHandler syncHandler = new SyncHandler();
-final scaffoldKey = GlobalKey<ScaffoldState>();
-BuildContext drawerContext;
+final mainScaffoldKey = GlobalKey<ScaffoldState>();
+final drawerScaffoldKey = GlobalKey<ScaffoldState>();
 String chapterList;
 StatusItem statusHandler = StatusItem();
 double serverVersion = 2020.0;
@@ -48,7 +48,7 @@ List<String> supportedLanguages = [
 
 // Global methods
 void needsNewerServerSnackbar(double version) {
-  scaffoldKey.currentState.showSnackBar(SnackBar(
+  mainScaffoldKey.currentState.showSnackBar(SnackBar(
     duration: Duration(seconds: 3),
     content: Text(AppLocalizations.of(context)
         .getText("remote.needs.newer.version")

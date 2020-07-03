@@ -713,3 +713,6 @@ remote.about.text.app=Esta es una aplicación sin fines lucrativos desarrollada 
 remote.about.text.support=No dude en mandarme un correo electrónico a arvid @ quelea.org en caso de que tenga preguntas o experimente problemas, pero anteriormente, compruebe que Quelea esté en marcha antes que la aplicación (con los dos servidores activos), que los dos dispositivos estén conectados al mismo red y que haya introducido el URL correcto.
 remote.about.text.responsibility=No puedo garantizar una experiencia de la aplicación sin errores, por eso declino toda responsabilidad de cualquier problema que pueda ocurrir al uso en vivo.
 remote.ipv6.not.supported=Desafortunadamente no puede utilizar direcciones IPv6. Debe emplear una dirección IPv4 para el uso de esta aplicación. Para saber cómo encontrar su dirección, busque en Google 'enconrar dirección IP local' y el nombre de su sistema operativo. Introduzca la dirección IPv4/el URL abajo.
+remote.on.end.title=Suceso al inicio/finales de un punto
+remote.long.press.title=Suceso de presión prolongada
+remote.double.press.title=Suceso de presión doble

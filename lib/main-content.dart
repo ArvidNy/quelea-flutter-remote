@@ -157,9 +157,11 @@ class _MainState extends State<MainPage> {
     };
     return RawKeyboardListener(
       focusNode: global.focusNode,
-      onKey: (event) => handleKeyEvent(event, context, settingsStateFunctions),
+      onKey: (event) =>
+          handleKeyEvent(event, context, settingsStateFunctions, _liveItem),
       child: WillPopScope(
         child: Scaffold(
+          key: global.drawerScaffoldKey,
           drawer:
               ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),
           drawerScrimColor: Colors.black54,
@@ -194,9 +196,8 @@ class _MainState extends State<MainPage> {
           ),
         ),
         onWillPop: () {
-          if (!global.drawerContext.toString().contains("dirty") &&
-              Scaffold.of(global.drawerContext).isDrawerOpen) {
-            Navigator.pop(global.drawerContext, true);
+          if (global.drawerScaffoldKey.currentState.isDrawerOpen) {
+            Navigator.pop(global.drawerScaffoldKey.currentState.context, true);
             return Future<bool>.value(false);
           } else {
             return showExitDialog(context);
@@ -255,7 +256,7 @@ class _MainState extends State<MainPage> {
         swipeDirection = DismissDirection.horizontal;
       }
     } else {
-      if (_liveItem.activeSlide == _liveItem.lyrics.length - 1) {
+      if (_liveItem.activeSlide == _liveItem.itemSlides.length - 1) {
         swipeDirection = DismissDirection.startToEnd;
       } else if (_liveItem.activeSlide == 0) {
         swipeDirection = DismissDirection.endToStart;

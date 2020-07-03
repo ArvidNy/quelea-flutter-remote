@@ -699,6 +699,12 @@ remote.about.text.app=This app is a non-profit app made to use with the open sou
 remote.about.text.support=Feel free to send me an email at arvid @ quelea.org if you have any questions or are experiencing issues, but make sure you've started Quelea before the app (with both servers active), that both devices are connected to same network and that you've entered the correct URL first.
 remote.about.text.responsibility=I cannot guarantee a flawless experience, so I will not take responsibility for any issues that could occur in a live setting.
 remote.ipv6.not.supported=Unfortunately you can't use IPv6 addresses. You need to use an IPv4 address to be able to use this app. If you don't know how to find it, google 'find local ip' and the name of your operating system. Enter the IPv4 address/URL below.
+remote.on.end.title=Item end/beginning action
+remote.on.end.description=Select what you want the app to do when you navigate with the volume buttons and reach the end/beginning of an item.
+remote.long.press.description=Select what you want to happen if you long-press a volume button.
+remote.long.press.title=Long-press action
+remote.double.press.title=Double press action
+remote.double.press.description=Select what you want to happen if you press the two volume buttons at the same time.
 
 -- New labels --
 remote.select.chapter.verses=Select chapter and verse(s)

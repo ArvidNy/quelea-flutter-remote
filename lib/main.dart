@@ -44,7 +44,7 @@ class QueleaMobileRemote extends StatelessWidget {
               accentColor: Colors.grey[600],
             ),
             home: Scaffold(
-              key: global.scaffoldKey,
+              key: global.mainScaffoldKey,
               body: MainPage(isLightTheme),
             ),
           );

@@ -10,3 +10,4 @@ export "FLUTTER_FRAMEWORK_DIR=/Users/arvid/Documents/Programmering/flutter/bin/c
 export "FLUTTER_BUILD_NAME=0.1.0"
 export "FLUTTER_BUILD_NUMBER=0.1.0"
 export "TRACK_WIDGET_CREATION=true"
+export "DART_DEFINES=flutter.inspector.structuredErrors=true"
