@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:get/route_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import '../handlers/server-search-handler.dart';
 import 'package:ping_discover_network/ping_discover_network.dart';
 import 'package:preferences/preference_service.dart';
 
@@ -36,23 +37,33 @@ class DownloadHandler {
   ///
   /// This method should only be used when a server response is
   /// expected. Use `sendSignal` otherwise.
-  Future download(String urlString, Function update) async {
-    if (global.debug) print(urlString);
+  Future download(String urlString, Function update, {Duration timeout}) async {
+    if (global.debug) debugPrint(urlString);
     try {
-      var data = await http.get(urlString);
-      if (data.statusCode == 200)
+      var data = await http
+          .get(urlString)
+          .timeout(timeout ?? Duration(milliseconds: 500));
+      if (data.statusCode == 200) {
         _parseData(utf8.decode(data.bodyBytes), urlString, update);
+      } else {
+        if (global.debug) debugPrint("Got response code ${data.statusCode}");
+      }
       connectionFailed = 0;
     } catch (exception) {
-      if (urlString.contains("lyrics")) connectionFailed++;
+      if (global.debug)
+        debugPrint(
+            "Failed with the following exception ${exception.toString()}");
+      if (urlString.contains("lyrics")) {
+        connectionFailed++;
+        if (global.debug) debugPrint("failed: $connectionFailed");
+      }
       if (connectionFailed > 5) {
-        if (!Navigator.canPop(global.context)) {
-          showInputDialog(
-              global.context,
-              AppLocalizations.of(global.context)
-                  .getText("remote.failed.finding.server"),
-              false);
-        }
+        Get.back(closeOverlays: true);
+        Get.dialog(getLoginDialog(
+            AppLocalizations.of(Get.context)
+                .getText("remote.failed.finding.server"),
+            false));
+        connectionFailed = 0;
         global.syncHandler.stop();
       }
     }
@@ -70,7 +81,7 @@ class DownloadHandler {
   /// This method should only be used when no server response is
   /// expected. Use `download` otherwise.
   Future sendSignal(String urlString, Function update) async {
-    if (global.debug) print(urlString);
+    if (global.debug) debugPrint(urlString);
     try {
       var url = Uri.parse(urlString);
       var httpClient = HttpClient();
@@ -81,7 +92,8 @@ class DownloadHandler {
       }
       update();
     } catch (exception) {
-      print("exception: $exception");
+      if (global.debug)
+        debugPrint("Failed sending $urlString with the exception: $exception");
       _showSignalFailedSnackbar();
     }
   }
@@ -108,12 +120,10 @@ class DownloadHandler {
     } else if (urlString.contains("song")) {
       update(parser.getText(data, ["a"]));
     } else if (urlString.contains("addbible")) {
-      global.mainScaffoldKey.currentState.showSnackBar(
-        SnackBar(
+      Get.rawSnackbar(
+          message: data,
           duration: Duration(seconds: 3),
-          content: Text(data),
-        ),
-      );
+          backgroundColor: Get.theme.accentColor);
       update();
     } else {
       update(data);
@@ -136,42 +146,37 @@ class DownloadHandler {
   /// Opens the `showInputDialog` for entering a new URL
   /// if the connection fails or for entering the password
   /// if the connection is successful.
-  void testConnection(String url, BuildContext context, bool autoConnect) {
-    if (global.debug) print("Test " + url);
-    while (Navigator.canPop(context)) Navigator.pop(context);
+  void testConnection(String url, bool autoConnect) {
+    if (global.debug) debugPrint("Test " + url);
     if (!url.startsWith("http")) url = "http://" + url;
-    if (_urlIsOk(url, context)) {
+    if (_urlIsOk(url)) {
       global.url = url;
       _testConnection(url).then((onValue) {
         if (onValue["code"] == 200) {
-          _handleTestResults(onValue, context, autoConnect, url);
+          _handleTestResults(onValue, autoConnect, url);
         } else {
-          _failedConnectingDialog(autoConnect, context);
+          _failedConnectingDialog(autoConnect);
         }
       }).catchError((onError) {
-        _failedConnectingDialog(autoConnect, context);
+        _failedConnectingDialog(autoConnect);
       });
     }
   }
 
-  void _handleTestResults(
-      onValue, BuildContext context, bool autoConnect, String url) {
-    global.mainScaffoldKey.currentState.hideCurrentSnackBar();
+  void _handleTestResults(onValue, bool autoConnect, String url) {
+    Get.back(closeOverlays: true);
     if (onValue["data"].toString().contains("password")) {
-      showInputDialog(
-          context,
-          AppLocalizations.of(global.context)
-              .getText("remote.control.password"),
-          true);
+      Get.dialog(getLoginDialog(
+          AppLocalizations.of(Get.context).getText("remote.control.password"),
+          true));
     } else if (onValue["data"].toString().contains("logobutton")) {
       global.syncHandler.isConnected = true;
-      Scaffold.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 3),
-        content: Text(
-            AppLocalizations.of(global.context).getText("remote.connected")),
-      ));
+      Get.rawSnackbar(
+          message: AppLocalizations.of(Get.context).getText("remote.connected"),
+          duration: Duration(seconds: 3),
+          backgroundColor: Get.theme.accentColor);
       PrefService.setString("server_url", url);
-      FocusScope.of(context).requestFocus(global.focusNode);
+      FocusScope.of(Get.context).requestFocus(global.focusNode);
       global.syncHandler.start();
       download("$url/serverversion", (response) {
         if (response.toString().contains("apple-mobile-web-app-capable")) {
@@ -182,42 +187,38 @@ class DownloadHandler {
       });
     } else {
       global.syncHandler.isConnected = false;
-      showInputDialog(
-          context,
-          AppLocalizations.of(global.context).getText("remote.wrong.content"),
-          false);
+      Get.dialog(getLoginDialog(
+          AppLocalizations.of(Get.context).getText("remote.wrong.content"),
+          false));
     }
   }
 
-  bool _urlIsOk(url, context) {
+  bool _urlIsOk(url) {
     if (url.length - url.replaceAll(":", "").length > 2) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
-          context,
-          AppLocalizations.of(global.context)
-              .getText("remote.ipv6.not.supported"),
+      Get.dialog(getLoginDialog(
+          AppLocalizations.of(Get.context).getText("remote.ipv6.not.supported"),
           false));
       return false;
     } else if (!url.replaceFirst("://", "").contains(":")) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => showInputDialog(
-          context,
-          AppLocalizations.of(global.context).getText("remote.port.needed"),
+      Get.dialog(getLoginDialog(
+          AppLocalizations.of(Get.context).getText("remote.port.needed"),
           false));
       return false;
     }
     return true;
   }
 
-  void _failedConnectingDialog(bool autoConnect, BuildContext context) {
+  void _failedConnectingDialog(bool autoConnect) {
+    global.syncHandler.isConnected = false;
     if (autoConnect) {
-      DownloadHandler().autoConnect(context);
+      DownloadHandler().autoConnect();
     } else {
-      SchedulerBinding.instance.addPostFrameCallback(
-          (_) => global.mainScaffoldKey.currentState.hideCurrentSnackBar());
-      showInputDialog(
-          context,
-          AppLocalizations.of(global.context)
-              .getText("remote.failed.finding.server"),
-          false);
+      Get.back(closeOverlays: true);
+      Get.dialog(getLoginDialog(
+          AppLocalizations.of(Get.context).getText(global.isFirstRun()
+              ? "navigate.remote.control.label"
+              : "remote.failed.finding.server"),
+          false));
     }
   }
 
@@ -228,33 +229,69 @@ class DownloadHandler {
     });
   }
 
-  void autoConnect(BuildContext context) async {
+  void autoConnect() async {
     if (await (Connectivity().checkConnectivity()) == ConnectivityResult.wifi) {
       var wifiIP = await (Connectivity().getWifiIP());
-      final stream = NetworkAnalyzer.discover2(
-          wifiIP.substring(0, wifiIP.lastIndexOf(".")), 50015);
-      stream.listen((NetworkAddress addr) {
-        if (addr.exists) {
-          DownloadHandler().download("http://${addr.ip}:50015", (html) {
-            String remoteUrl = html.toString().split("\n")[1];
-            // Avoid issues with unsupported IPv6
-            if (remoteUrl.length - remoteUrl.replaceAll(":", "").length > 2) {
-              remoteUrl =
-                  addr.ip + remoteUrl.substring(remoteUrl.lastIndexOf(":"));
-            }
-            testConnection(remoteUrl, context, false);
-          });
-        }
-      });
+      final stream = ServerSearchHandler.discover2(
+          wifiIP.substring(0, wifiIP.lastIndexOf(".")), 50015,
+          timeout: Duration(milliseconds: 1000), start: 1, end: 200);
+      // iOS devices (or at least the simulator) seem to get overloaded when
+      // searching all 256 IP numbers, so only pinging the first 200 here.
+      // If the server would be located at a higher IP, it can be entered manually.
+      try {
+        String foundAddr = "";
+        stream.listen((NetworkAddress addr) {
+          if (addr.exists) {
+            if (global.debug) debugPrint("found ${addr.ip}");
+            foundAddr = addr.ip;
+            _checkAutoConnectUrl(foundAddr);
+          }
+        }).onDone(() {
+          if (global.debug) debugPrint("done $foundAddr");
+          if (foundAddr.isEmpty) {
+            Get.back(closeOverlays: true);
+            Get.dialog(getLoginDialog(
+                AppLocalizations.of(Get.context)
+                    .getText("remote.failed.finding.server"),
+                false));
+          } else if (!global.syncHandler.isConnected) {
+            if (global.debug) debugPrint("check autoconnect URL");
+            _checkAutoConnectUrl(foundAddr);
+          }
+        });
+      } catch (e) {
+        if (global.debug)
+          debugPrint("Failed auto-connecting with the following exception: $e");
+        Get.back(closeOverlays: true);
+        Get.dialog(getLoginDialog(
+            AppLocalizations.of(Get.context)
+                .getText("remote.failed.finding.server"),
+            false));
+      }
     } else {
-      if (Navigator.canPop(context)) Navigator.pop(context);
-      showInputDialog(context,
-          AppLocalizations.of(global.context).getText("remote.no.wifi"), false);
+      Get.back(closeOverlays: true);
+      Get.dialog(getLoginDialog(
+          AppLocalizations.of(Get.context).getText("remote.no.wifi"), false));
     }
   }
 
+  void _checkAutoConnectUrl(String foundAddr) {
+    DownloadHandler().download("http://$foundAddr:50015", (html) {
+      if (html.toString().contains("\n")) {
+        String remoteUrl = html.toString().split("\n")[1];
+        // Avoid issues with unsupported IPv6 from the server
+        // and only use the port number
+        if (remoteUrl.length - remoteUrl.replaceAll(":", "").length > 2) {
+          remoteUrl =
+              foundAddr + remoteUrl.substring(remoteUrl.lastIndexOf(":"));
+        }
+        testConnection(remoteUrl, false);
+      }
+    }, timeout: Duration(seconds: 2)).catchError((e) => debugPrint("error: $e"));
+  }
+
   Future _testConnection(String urlString) async {
-    if (global.debug) print("test $urlString");
+    if (global.debug) debugPrint("test $urlString");
     var url = Uri.parse(urlString);
     var httpClient = HttpClient();
     httpClient.connectionTimeout = Duration(milliseconds: 3000);
@@ -264,31 +301,24 @@ class DownloadHandler {
     return {"code": response.statusCode, "data": data};
   }
 
-  void showLoadingIndicator(BuildContext context) {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      global.mainScaffoldKey.currentState.hideCurrentSnackBar();
-      global.mainScaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 30),
-          content: Row(
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Padding(padding: EdgeInsets.all(16)),
-              Text(
-                  "${AppLocalizations.of(global.context).getText("loading.text")}...")
-            ],
-          ),
-        ),
-      );
-    });
+  void showLoadingIndicator() {
+    Get.rawSnackbar(
+        message:
+            "${AppLocalizations.of(Get.context).getText("loading.text")}...",
+        showProgressIndicator: true,
+        duration: Duration(seconds: 60),
+        onTap: (object) => Get.dialog(getLoginDialog(
+            AppLocalizations.of(Get.context)
+                .getText("navigate.remote.control.label"),
+            false)),
+        backgroundColor: Get.theme.accentColor);
   }
 
   void _showSignalFailedSnackbar() {
-    global.mainScaffoldKey.currentState.hideCurrentSnackBar();
-    global.mainScaffoldKey.currentState.showSnackBar(SnackBar(
-      duration: Duration(seconds: 3),
-      content: Text(
-          AppLocalizations.of(global.context).getText("remote.signal.failed")),
-    ));
+    Get.rawSnackbar(
+        message:
+            AppLocalizations.of(Get.context).getText("remote.signal.failed"),
+        duration: Duration(seconds: 3),
+        backgroundColor: Get.theme.accentColor);
   }
 }

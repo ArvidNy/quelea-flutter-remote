@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import './download-handler.dart';
 import './language-delegate.dart';
 import '../dialogs/bible-dialog.dart';
@@ -10,7 +11,7 @@ import '../utils/global-utils.dart' as global;
 import '../widgets/live-item.dart';
 
 /// Handles all physical keyboard shortcuts.
-void handleKeyEvent(RawKeyEvent event, BuildContext context,
+void handleKeyEvent(RawKeyEvent event,
     Map<String, Function> settingsStateFunctions, LiveItem liveItem) {
   if (event.runtimeType == RawKeyDownEvent) {
     // Next slide/item
@@ -50,21 +51,18 @@ void handleKeyEvent(RawKeyEvent event, BuildContext context,
       // Settings
     } else if (event.data.logicalKey == LogicalKeyboardKey.keyT &&
         (event.isMetaPressed || event.isControlPressed)) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SettingsPage(
-            title: AppLocalizations.of(context).getText("options.title"),
-            settingsFunctions: settingsStateFunctions,
-          ),
+      Get.to(
+        SettingsPage(
+          title: AppLocalizations.of(Get.context).getText("options.title"),
+          settingsFunctions: settingsStateFunctions,
         ),
       );
       // Search
     } else if (event.data.logicalKey == LogicalKeyboardKey.keyL &&
         (event.isMetaPressed || event.isControlPressed)) {
-      showSelectSearchTypeDialog(context, () async {
-        showSearch(context: context, delegate: SongSearchDelegate());
-      }, bibleSearchFunction(context));
+      showSelectSearchTypeDialog(() async {
+        showSearch(context: Get.context, delegate: SongSearchDelegate());
+      }, bibleSearchFunction());
       // Schedule
     } else if (event.data.logicalKey == LogicalKeyboardKey.keyD &&
         (event.isMetaPressed || event.isControlPressed)) {

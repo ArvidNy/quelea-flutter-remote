@@ -31,6 +31,8 @@ class SyncHandler {
   }
 
   stop() {
-    timer.cancel();
+    if (timer != null && timer.isActive) {
+      timer.cancel();
+    }
   }
 }

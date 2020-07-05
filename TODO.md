@@ -43,7 +43,7 @@
 - [x] Settings page
     - [x] Auto-connect
     - [x] Swipe navigation
-    - [x] Volume navigation (Android)
+    - [x] Volume navigation (Android, not allowed on iOS)
         - [x] Override volume change
         - [x] Add extra options
     - [ ] ~~Dpad navigation~~
@@ -57,7 +57,7 @@
     - [x] Facebook link
     - [x] Source code link
     - [x] Website link
-    - [ ] Keyboard shortcut information
+    - [x] Keyboard shortcut information
 - [x] Scroll to current slide
 - [x] Removing items from the schedule
 - [x] Moving items in the schedule
@@ -78,6 +78,7 @@
 - [x] Open/close drawer with back (Android)
 - [x] Add support for ChromeBook (Android)
 - [x] Keep screen alive
-- [ ] Keyboard shortcuts for iOS
-- [ ] Automatic scroll to always show the active slide
+- [x] Keyboard shortcuts for iOS
+- [ ] Set language manually (Will leave this for future version)
+- [ ] Automatic scroll to always show the active slide (Will leave this for future version)
 - [ ] Crash handling

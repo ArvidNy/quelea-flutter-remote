@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:preferences/preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -8,10 +9,8 @@ import '../objects/status-item.dart';
 
 // Global variables
 String url = PrefService.getString('server_url') ?? "http://192.168.0.1:1112";
-BuildContext context;
 bool debug = false;
 SyncHandler syncHandler = new SyncHandler();
-final mainScaffoldKey = GlobalKey<ScaffoldState>();
 final drawerScaffoldKey = GlobalKey<ScaffoldState>();
 String chapterList;
 StatusItem statusHandler = StatusItem();
@@ -48,18 +47,25 @@ List<String> supportedLanguages = [
 
 // Global methods
 void needsNewerServerSnackbar(double version) {
-  mainScaffoldKey.currentState.showSnackBar(SnackBar(
-    duration: Duration(seconds: 3),
-    content: Text(AppLocalizations.of(context)
-        .getText("remote.needs.newer.version")
-        .replaceFirst("\$1", version.toString())),
-  ));
+  Get.rawSnackbar(
+      message: AppLocalizations.of(Get.context).getText(
+          AppLocalizations.of(Get.context)
+              .getText("remote.needs.newer.version")
+              .replaceFirst("\$1", version.toString())),
+      duration: Duration(seconds: 3),
+      backgroundColor: Get.theme.accentColor);
 }
 
-  launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
   }
+}
+
+bool isFirstRun() {
+  bool firstRun = PrefService.getBool('first_run') ?? true;
+  PrefService.setBool('first_run', false);
+  return firstRun;
+}

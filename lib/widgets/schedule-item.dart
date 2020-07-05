@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../handlers/download-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -36,36 +37,30 @@ class ScheduleItem extends StatelessWidget {
       ),
       onTap: () {
         if (index >= 0) {
-          DownloadHandler()
-              .download(global.url + "/gotoitem$index", () => {});
+          DownloadHandler().download(global.url + "/gotoitem$index", () => {});
         }
-        if (Navigator.canPop(context)) Navigator.pop(context);
+        Get.back();
       },
       onLongPress: () {
-        showDialog(
-          context: global.context,
-          child: AlertDialog(
-            content: Container(
-              height: 180,
-              width: double.maxFinite,
-              child: Column(
-                children: <Widget>[
-                  Text(AppLocalizations.of(context).getText("remote.choose.action").replaceFirst("\$1", title),
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ListView(
-                    padding: EdgeInsets.only(top: 10),
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      _getInkWell(AppLocalizations.of(context).getText("remove.song.schedule.tooltip"), "remove"),
-                      _getInkWell(AppLocalizations.of(context).getText("move.up.schedule.tooltip"), "moveup"),
-                      _getInkWell(AppLocalizations.of(context).getText("move.down.schedule.tooltip"), "movedown"),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
+        Get.dialog(
+          SimpleDialog(
+              title: Text(AppLocalizations.of(context)
+                  .getText("remote.choose.action")
+                  .replaceFirst("\$1", title)),
+              children: <Widget>[
+                _getDialogOption(
+                    AppLocalizations.of(context)
+                        .getText("remove.song.schedule.tooltip"),
+                    "remove"),
+                _getDialogOption(
+                    AppLocalizations.of(context)
+                        .getText("move.up.schedule.tooltip"),
+                    "moveup"),
+                _getDialogOption(
+                    AppLocalizations.of(context)
+                        .getText("move.down.schedule.tooltip"),
+                    "movedown"),
+              ]),
         );
       },
     );
@@ -76,15 +71,15 @@ class ScheduleItem extends StatelessWidget {
     return title + isLive.toString() + isPreview.toString() + index.toString();
   }
 
-  _getInkWell(String text, String action) {
-    return InkWell(
+  _getDialogOption(String text, String action) {
+    return SimpleDialogOption(
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Text(text),
       ),
-      onTap: () {
+      onPressed: () {
         DownloadHandler().sendSignal("${global.url}/$action/$index", () => {});
-        if (Navigator.canPop(global.context)) Navigator.pop(global.context);
+        Get.back();
       },
     );
   }

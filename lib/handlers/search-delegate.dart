@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../dialogs/search-item-dialog.dart';
 import '../handlers/download-handler.dart';
@@ -11,13 +12,12 @@ import '../utils/global-utils.dart' as global;
 /// in a `ListView`. An item that is clicked is previewed
 /// in the `showAddSearchItemDialog`.
 class SongSearchDelegate extends SearchDelegate<String> {
-  List<SearchItem> _filterName = new List();
 
   @override
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
       IconButton(
-        tooltip: AppLocalizations.of(global.context).getText("clear.search.box"),
+        tooltip: AppLocalizations.of(Get.context).getText("clear.search.box"),
         icon: const Icon((Icons.clear)),
         onPressed: () {
           query = '';
@@ -92,7 +92,7 @@ ThemeData appBarTheme(BuildContext context) {
             onTap: () {
               var id = data[index].id;
               DownloadHandler().download(global.url + "/song/$id", (lyrics) {
-                showAddSearchItemDialog(context, data[index].title, lyrics, id,
+                showAddSearchItemDialog(data[index].title, lyrics, id,
                     () => close(context, data[index].title));
               });
             },

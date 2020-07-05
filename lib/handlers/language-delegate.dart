@@ -34,7 +34,7 @@ class AppLocalizations {
       print("Failed loading string: '$text'");
     }
     // A workaround for the `DropdownPreference` in `SettingsPage` that gets too wide sometimes
-    if (text.contains("swipe.navigation.item") || text.contains("swipe.navigation.slide") && ret.length > 10) {
+    if (text.contains("remote.action") && ret.length > 10) {
       ret = ret.replaceFirst(" ", "\n", (ret.length/3).round());
     }
     return ret;

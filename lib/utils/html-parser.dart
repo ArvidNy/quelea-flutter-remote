@@ -45,9 +45,10 @@ List<SearchItem> getSearchResults(String html) {
   Document document = parse(html);
   if (document.getElementsByTagName("a") != null) {
     for (Element s in document.getElementsByTagName("a")) {
-      print(s.text);
-      searchResult
-          .add(SearchItem(s.attributes["href"].split("/").last, s.text));
+      if (s.attributes["href"] != null) {
+        searchResult
+            .add(SearchItem(s.attributes["href"].split("/").last, s.text));
+      }
     }
   }
   return searchResult;

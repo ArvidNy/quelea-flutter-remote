@@ -1,4 +1,4 @@
-module wakelock {
+framework module wakelock {
   umbrella header "wakelock-umbrella.h"
 
   export *

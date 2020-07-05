@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:preferences/preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -16,8 +15,6 @@ void main() async {
   runApp(QueleaMobileRemote());
 }
 
-StreamController<bool> isLightTheme = StreamController();
-
 class QueleaMobileRemote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,9 +22,8 @@ class QueleaMobileRemote extends StatelessWidget {
     Wakelock.enable();
     return StreamBuilder<bool>(
         initialData: true,
-        stream: isLightTheme.stream,
         builder: (context, snapshot) {
-          return MaterialApp(
+          return GetMaterialApp(
             title: "Quelea Mobile Remote",
             supportedLocales: getSupportedLocales(),
             localizationsDelegates: [
@@ -36,16 +32,19 @@ class QueleaMobileRemote extends StatelessWidget {
               GlobalMaterialLocalizations.delegate,
             ],
             theme: ThemeData(
-              brightness: (PrefService.getString("app_theme") ?? "light")
-                      .contains("light")
-                  ? Brightness.light
-                  : Brightness.dark,
+              brightness: Brightness.light,
               primaryColor: Colors.black,
-              accentColor: Colors.grey[600],
+              accentColor: Colors.grey[800],
             ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primaryColor: Colors.black,
+              accentColor: Colors.grey[800],
+            ),
+            themeMode: (PrefService.getString("app_theme") ?? "light")
+                    .contains("light") ? ThemeMode.light : ThemeMode.dark,
             home: Scaffold(
-              key: global.mainScaffoldKey,
-              body: MainPage(isLightTheme),
+              body: MainPage(),
             ),
           );
         });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:indexed_list_view/indexed_list_view.dart';
 import 'package:preferences/preferences.dart';
 
@@ -10,18 +11,16 @@ import '../utils/global-utils.dart' as global;
 /// 1. Bible translation
 /// 2. Bible book
 /// 3. Chapter and verses
-Function bibleSearchFunction(BuildContext context) {
+Function bibleSearchFunction() {
   return () =>
       DownloadHandler().download(global.url + "/translations", (translations) {
         _showBibleDialog(
-            context,
-            AppLocalizations.of(context).getText("select.language"),
+            AppLocalizations.of(Get.context).getText("select.language"),
             translations.split("\n"), (translation) {
-          DownloadHandler().download(global.url + "/books/$translation",
-              (books) {
+          String t = translation.toString().replaceFirst("*", "");
+          DownloadHandler().download(global.url + "/books/$t", (books) {
             _showBibleDialog(
-                context,
-                AppLocalizations.of(context).getText("remote.select.book"),
+                AppLocalizations.of(Get.context).getText("remote.select.book"),
                 books.split("\n"), (book) {
               int bookNum = 0;
               for (String s in books.split("\n")) {
@@ -29,11 +28,10 @@ Function bibleSearchFunction(BuildContext context) {
                 if (s.contains(book)) break;
               }
               _showBibleChapterDialog(
-                  context,
-                  AppLocalizations.of(context)
+                  AppLocalizations.of(Get.context)
                       .getText("remote.select.chapter.verses"),
                   bookNum,
-                  translation,
+                  t,
                   book);
             });
           });
@@ -41,154 +39,129 @@ Function bibleSearchFunction(BuildContext context) {
       });
 }
 
-void _showBibleDialog(
-    BuildContext context, String title, List items, Function closeSearch) {
-  print(items);
-  showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          actions: <Widget>[
-            FlatButton(
-              child:
-                  Text(AppLocalizations.of(context).getText("cancel.button")),
-              onPressed: () {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ],
-          content: Container(
-            width: 300.0,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: items.length,
-              itemBuilder: (BuildContext context, int index) {
-                return items[index].toString().isNotEmpty
-                    ? InkWell(
-                        onTap: () => _closeAndReturnItem(
-                            items[index], closeSearch, context),
-                        child: Container(
-                            height: 45,
-                            child: Center(child: Text(items[index]))),
-                      )
-                    : Container();
-              },
-            ),
-          ),
-        );
-      });
+void _showBibleDialog(String title, List items, Function closeSearch) {
+  if (global.debug) debugPrint(items.toString());
+  Get.dialog(AlertDialog(
+    title: Text(title),
+    actions: <Widget>[
+      FlatButton(
+        child: Text(AppLocalizations.of(Get.context).getText("cancel.button")),
+        onPressed: () {
+          Get.back(closeOverlays: true);
+        },
+      ),
+    ],
+    content: Container(
+      width: 300.0,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: items.length,
+        itemBuilder: (BuildContext context, int index) {
+          return items[index].toString().isNotEmpty
+              ? InkWell(
+                  onTap: () =>
+                      _closeAndReturnItem(items[index], closeSearch),
+                  child: Container(
+                      height: 45, child: Center(child: Text(items[index]))),
+                )
+              : Container();
+        },
+      ),
+    ),
+  ));
 }
 
-void _closeAndReturnItem(String item, Function ret, BuildContext context) {
-  if (Navigator.canPop(context)) {
-    Navigator.pop(context);
-  }
+void _closeAndReturnItem(String item, Function ret) {
+  Get.back(closeOverlays: true);
   ret(item);
 }
 
 final _itemScrollController = IndexedScrollController(initialIndex: 0);
 
-void _showBibleChapterDialog(BuildContext context, String title, int bookNum,
-    String translation, String book) {
+void _showBibleChapterDialog(
+    String title, int bookNum, String translation, String book) {
   int chapter = 1;
   int verseStart = 0;
   int verseEnd = 0;
-
-  showDialog(
-      context: context,
-      builder: (context) {
-        if (_itemScrollController.hasClients) {
+  Get.dialog(AlertDialog(
+    title: Text(title),
+    actions: <Widget>[
+      FlatButton(
+        child: Text(AppLocalizations.of(Get.context).getText("cancel.button")),
+        onPressed: () {
+          Get.back(closeOverlays: true);
           _itemScrollController.jumpToIndex(0);
-        }
-        return AlertDialog(
-          title: Text(title),
-          actions: <Widget>[
-            FlatButton(
-              child:
-                  Text(AppLocalizations.of(context).getText("cancel.button")),
-              onPressed: () {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            FlatButton(
-                child: Text(
-                    AppLocalizations.of(context).getText("remote.add.go.live")),
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                  DownloadHandler().download(
-                      global.url +
-                          "/addbible/$translation/$book/" +
-                          getPassageName(chapter, verseStart, verseEnd),
-                      () => DownloadHandler()
-                          .download(global.url + "/gotoitem9999", () => {}));
-                }),
-            FlatButton(
-                child: Text(AppLocalizations.of(context).getText("ok.button")),
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                  DownloadHandler().download(
-                      global.url +
-                          "/addbible/$translation/$book/" +
-                          getPassageName(chapter, verseStart, verseEnd),
-                      () => {});
-                }),
-          ],
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return Container(
-                width: 500,
-                child: Stack(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        _getNumberListView(
-                            _getNumberListFromBibleBook("$bookNum,", true),
-                            chapter, (index) {
-                          setState(() {
-                            chapter = index + 1;
-                          });
-                        }, false),
-                        _getNumberListView(
-                            _getNumberListFromBibleBook(
-                                "$bookNum,$chapter,", false),
-                            verseStart, (index) {
-                          setState(() {
-                            verseStart = index + 1;
-                            if (verseEnd < verseStart) {
-                              verseEnd = index + 1;
-                              _itemScrollController.jumpToIndex(index);
-                            }
-                          });
-                        }, false),
-                        _getNumberListView(
-                            _getNumberListFromBibleBook(
-                                "$bookNum,$chapter,", false),
-                            verseEnd, (index) {
-                          setState(() {
-                            verseEnd = index + 1;
-                          });
-                        }, true),
-                      ],
-                    ),
-                    Text("Add $book " +
-                        getPassageName(chapter, verseStart, verseEnd) +
-                        "\nin $translation"),
-                  ],
-                ),
-              );
-            },
+        },
+      ),
+      FlatButton(
+          child: Text(
+              AppLocalizations.of(Get.context).getText("remote.add.go.live")),
+          onPressed: () {
+            Get.back(closeOverlays: true);
+            _itemScrollController.jumpToIndex(0);
+            DownloadHandler().download(
+                global.url +
+                    "/addbible/$translation/$book/" +
+                    getPassageName(chapter, verseStart, verseEnd),
+                () => DownloadHandler()
+                    .download(global.url + "/gotoitem9999", () => {}));
+          }),
+      FlatButton(
+          child: Text(AppLocalizations.of(Get.context).getText("ok.button")),
+          onPressed: () {
+            Get.back(closeOverlays: true);
+            _itemScrollController.jumpToIndex(0);
+            DownloadHandler().download(
+                global.url +
+                    "/addbible/$translation/$book/" +
+                    getPassageName(chapter, verseStart, verseEnd),
+                () => {});
+          }),
+    ],
+    content: StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+          width: 500,
+          child: Stack(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  _getNumberListView(
+                      _getNumberListFromBibleBook("$bookNum,", true), chapter,
+                      (index) {
+                    setState(() {
+                      chapter = index + 1;
+                    });
+                  }, false),
+                  _getNumberListView(
+                      _getNumberListFromBibleBook("$bookNum,$chapter,", false),
+                      verseStart, (index) {
+                    setState(() {
+                      verseStart = index + 1;
+                      if (verseEnd < verseStart) {
+                        verseEnd = index + 1;
+                        _itemScrollController.jumpToIndex(index);
+                      }
+                    });
+                  }, false),
+                  _getNumberListView(
+                      _getNumberListFromBibleBook("$bookNum,$chapter,", false),
+                      verseEnd, (index) {
+                    setState(() {
+                      verseEnd = index + 1;
+                    });
+                  }, true),
+                ],
+              ),
+              Text("Add $book " +
+                  getPassageName(chapter, verseStart, verseEnd) +
+                  "\nin $translation"),
+            ],
           ),
         );
-      });
+      },
+    ),
+  ));
 }
 
 String getPassageName(int chapter, int verseStart, int verseEnd) {

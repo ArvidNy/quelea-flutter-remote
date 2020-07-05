@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../handlers/download-handler.dart';
-import '../utils/global-utils.dart';
+import '../utils/global-utils.dart' as global;
 import '../widgets/live-item.dart';
 
 /// A class widget that shows the current
@@ -35,10 +35,10 @@ class LyricsView extends StatelessWidget {
 
   void _lyricsItemClick(int index, LiveItem liveItem) {
     if (liveItem.isMedia) {
-      DownloadHandler().sendSignal(url + "/play", () => {});
+      DownloadHandler().sendSignal(global.url + "/play", () => {});
     } else {
       DownloadHandler()
-          .sendSignal(url + "/section" + index.toString(), () => {});
+          .sendSignal(global.url + "/section" + index.toString(), () => {});
     }
   }
 }

@@ -22,16 +22,14 @@ import './widgets/schedule-item.dart';
 import 'handlers/key-event-handler.dart';
 
 class MainPage extends StatefulWidget {
-  StreamController<bool> _isLightTheme;
-  MainPage(this._isLightTheme);
 
   @override
   _MainState createState() {
-    return _MainState(_isLightTheme);
+    return _MainState();
   }
 }
 
-class _MainState extends State<MainPage> {
+class _MainState extends State<MainPage> with WidgetsBindingObserver {
   ScheduleList _scheduleItems = ScheduleList(List<ScheduleItem>());
   bool _isLogo = false;
   bool _isBlack = false;
@@ -39,18 +37,45 @@ class _MainState extends State<MainPage> {
   bool _isRecord = false;
   LiveItem _liveItem = LiveItem("");
   final _itemScrollController = ScrollController();
-  StreamController<bool> _isLightTheme;
 
   bool _useSwipe = !(PrefService.getString("swipe_navigation_action") ?? "off")
       .contains("off");
   bool _disableRecord = PrefService.getBool("disable_record") ?? false;
 
-  _MainState(this._isLightTheme);
+  _MainState();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!global.syncHandler.isConnected) {
+        DownloadHandler().showLoadingIndicator();
+        DownloadHandler().testConnection(global.url,
+            PrefService.getBool("use_autoconnect") ?? true);
+      }
+    });
+  }
 
   @override
   void dispose() {
     global.focusNode.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (!global.syncHandler.isConnected) {
+        DownloadHandler().showLoadingIndicator();
+        DownloadHandler().testConnection(global.url,
+            PrefService.getBool("use_autoconnect") ?? false);
+      }
+    } else if (state == AppLifecycleState.paused) {
+      global.syncHandler.stop();
+      global.syncHandler.isConnected = false;
+    }
   }
 
   void _setRecord(bool isRecord) {
@@ -141,24 +166,24 @@ class _MainState extends State<MainPage> {
     });
   }
 
+  void _setState(Function function) {
+    setState(() {
+      function();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    global.context = context;
-    if (!global.syncHandler.isConnected) {
-      DownloadHandler().showLoadingIndicator(context);
-      DownloadHandler().testConnection(
-          global.url, context, PrefService.getBool("use_autoconnect") ?? true);
-    }
     global.syncHandler.setFunctions(_setLiveItem, _setSchedule, _setStatus);
     Map<String, Function> settingsStateFunctions = <String, Function>{
       'record': _setDisableRecord,
       'swipe': _setSwipe,
-      'theme': (b) => _isLightTheme.add(b),
+      'setState': _setState,
     };
     return RawKeyboardListener(
       focusNode: global.focusNode,
       onKey: (event) =>
-          handleKeyEvent(event, context, settingsStateFunctions, _liveItem),
+          handleKeyEvent(event, settingsStateFunctions, _liveItem),
       child: WillPopScope(
         child: Scaffold(
           key: global.drawerScaffoldKey,
@@ -200,7 +225,7 @@ class _MainState extends State<MainPage> {
             Navigator.pop(global.drawerScaffoldKey.currentState.context, true);
             return Future<bool>.value(false);
           } else {
-            return showExitDialog(context);
+            return showExitDialog();
           }
         },
       ),
@@ -212,9 +237,9 @@ class _MainState extends State<MainPage> {
       IconButton(
         icon: new Icon(Icons.search),
         onPressed: () {
-          showSelectSearchTypeDialog(context, () async {
+          showSelectSearchTypeDialog(() async {
             showSearch(context: context, delegate: SongSearchDelegate());
-          }, bibleSearchFunction(context));
+          }, bibleSearchFunction());
         },
         tooltip: AppLocalizations.of(context).getText("remote.search.tooltip"),
       ),
@@ -236,7 +261,7 @@ class _MainState extends State<MainPage> {
               icon: Icon(Icons.warning),
               onPressed: () => global.serverVersion < 2020.1
                   ? global.needsNewerServerSnackbar(2020.1)
-                  : showAddNoticeDialog(context),
+                  : showAddNoticeDialog(),
               tooltip: AppLocalizations.of(context)
                   .getText("remote.send.notice.tooltip"),
             )

@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../handlers/download-handler.dart';
 import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart' as global;
 
-showThemesDialog(BuildContext context, List<String> themes) {
-  showDialog(
-    context: context,
-    child: AlertDialog(
+showThemesDialog(List<String> themes) {
+  Get.dialog(AlertDialog(
       actions: <Widget>[
         FlatButton(
-            onPressed: () =>
-                Navigator.canPop(context) ? Navigator.pop(context) : null,
-            child: Text(AppLocalizations.of(context).getText("cancel.button"))),
+            onPressed: () => Get.back(closeOverlays: true),
+            child: Text(AppLocalizations.of(Get.context).getText("cancel.button"))),
       ],
       content: Container(
         width: double.maxFinite,
@@ -26,16 +24,13 @@ showThemesDialog(BuildContext context, List<String> themes) {
                     onTap: () {
                       DownloadHandler().sendSignal(
                           "${global.url}/settheme/${themes[index]}", () {
-                        Scaffold.of(global.context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                AppLocalizations.of(context).getText("remote.theme.was.set").replaceFirst("\$1", themes[index])),
-                          ),
-                        );
+                        Get.rawSnackbar(
+                            message: AppLocalizations.of(Get.context)
+                                .getText("remote.theme.was.set")
+                                .replaceFirst("\$1", themes[index]),
+                                backgroundColor: Get.theme.accentColor);
                       });
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      }
+                      Get.back(closeOverlays: true);
                     },
                   ),
                   Text(themes[index]),

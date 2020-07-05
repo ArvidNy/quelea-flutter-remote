@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../dialogs/theme-dialog.dart';
 import '../handlers/download-handler.dart';
@@ -18,7 +19,7 @@ class ScheduleDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var flatButton = FlatButton(
-      onPressed: () => _logout(context),
+      onPressed: () => _logout(),
       child: Row(
         children: <Widget>[
           Icon(Icons.exit_to_app),
@@ -40,18 +41,23 @@ class ScheduleDrawer extends StatelessWidget {
                           child: Row(
                             children: <Widget>[
                               Expanded(
-                                child: Text(AppLocalizations.of(context).getText("schedule.menu"),
+                                child: Text(
+                                    AppLocalizations.of(Get.context)
+                                        .getText("schedule.menu"),
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 18)),
                               ),
                               IconButton(
-                                tooltip: AppLocalizations.of(context).getText("remote.select.theme"),
+                                tooltip: AppLocalizations.of(Get.context)
+                                    .getText("remote.select.theme"),
                                 icon: Icon(
                                   Icons.color_lens,
                                   color: Colors.white,
                                 ),
-                                onPressed: () => DownloadHandler().download("${global.url}/getthemes", (themes){
-                                  showThemesDialog(context, themes.toString().split("\n"));
+                                onPressed: () => DownloadHandler().download(
+                                    "${global.url}/getthemes", (themes) {
+                                  showThemesDialog(
+                                      themes.toString().split("\n"));
                                 }),
                               ),
                             ],
@@ -82,7 +88,7 @@ class ScheduleDrawer extends StatelessWidget {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => _openSettings(context, _settingsFunctions),
+                onPressed: () => _openSettings(_settingsFunctions),
                 child: Row(
                   children: <Widget>[
                     Icon(Icons.settings),
@@ -99,22 +105,20 @@ class ScheduleDrawer extends StatelessWidget {
     );
   }
 
-  void _logout(BuildContext context) {
+  void _logout() {
     global.syncHandler.stop();
     DownloadHandler().sendSignal(global.url + "/logout", () {
-      DownloadHandler().testConnection(global.url, context, false);
+      DownloadHandler().testConnection(global.url, false);
     });
   }
 
-  void _openSettings(BuildContext context, Map<String, Function> _settingsFunctions) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SettingsPage(
-          title: AppLocalizations.of(context).getText("options.title"),
+  void _openSettings(Map<String, Function> _settingsFunctions) {
+    Get.back();
+    Get.to(
+        SettingsPage(
+          title: AppLocalizations.of(Get.context).getText("options.title"),
           settingsFunctions: _settingsFunctions,
         ),
-      ),
-    );
+        transition: Transition.rightToLeft);
   }
 }

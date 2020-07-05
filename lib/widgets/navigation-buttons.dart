@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:preferences/preferences.dart';
 
 import '../handlers/download-handler.dart';
@@ -38,7 +39,7 @@ class NavigationButtons extends StatelessWidget {
     bool isLightTheme = (PrefService.getString("app_theme") ?? "light").contains("light");
     return Container(
       width: 52,
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: MediaQuery.of(Get.context).size.height * 0.1,
       child: RaisedButton(
           onPressed: clickFunction,
           elevation: 10,
