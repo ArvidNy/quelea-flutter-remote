@@ -42,7 +42,7 @@ Widget getLoginDialog(String message, bool isPassword) {
               : IconButton(
                   icon: Icon(Icons.help),
                   onPressed: () => global.launchURL(
-                      "https://quelea-projection.github.io/docs/Remote_Troubleshooting"))
+                      "https://quelea-projection.github.io/docs/Remote_Control_Troubleshooting"))
         ],
       ),
       actions: <Widget>[

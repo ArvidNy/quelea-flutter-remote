@@ -25,12 +25,11 @@ class LiveItem {
       i++;
     }
     activeSlide = getActiveSlide(_html);
-    if (itemSlides.isEmpty) {
+    if (_html.contains("play()")) {
       String play = global.statusHandler.play;
-      if (_html.contains("play()")) {
         isMedia = true;
+        itemSlides.clear();
         itemSlides.add(ItemSlide("\n$play\n"));
-      }
     }
   }
 

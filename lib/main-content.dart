@@ -52,7 +52,7 @@ class _MainState extends State<MainPage> with WidgetsBindingObserver {
       if (!global.syncHandler.isConnected) {
         DownloadHandler().showLoadingIndicator();
         DownloadHandler().testConnection(global.url,
-            PrefService.getBool("use_autoconnect") ?? true);
+            PrefService.getBool("use_autoconnect") ?? false);
       }
     });
   }

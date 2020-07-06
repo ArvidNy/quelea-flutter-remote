@@ -12,6 +12,8 @@
 - [x] Stored URL should be checked before auto-connecting
 - [x] Loading opened sometimes again after connected
 - [x] Back button doesn't work sometimes
+- [ ] Timeout on presentations
+- [x] Play/pause bug
 
 ## Features
 - [x] Connecting to a server
@@ -65,7 +67,7 @@
 - [x] Notice quick add (future feature in Quelea 2020.1)
 - [x] Troubleshooting guide
 - [x] Multiple language support
-- [ ] ~~Search help~~
+- [x] Search help (online)
 - [x] Section titles
 - [x] Keyboard shortcuts (Android, no support for iOS yet)
     - [x] Numlock buttons

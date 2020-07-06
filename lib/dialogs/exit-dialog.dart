@@ -11,7 +11,7 @@ showExitDialog<bool>() {
       FlatButton(
         child: Text(AppLocalizations.of(Get.context).getText("cancel.button")),
         onPressed: () {
-          Navigator.pop(Get.context, false);
+          Get.back(closeOverlays: true);
         },
       ),
       FlatButton(

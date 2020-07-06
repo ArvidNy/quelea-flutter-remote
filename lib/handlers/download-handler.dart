@@ -100,7 +100,7 @@ class DownloadHandler {
 
   void _parseData(String data, String urlString, Function update) {
     if (urlString.contains("lyrics")) {
-      if (global.tempLyrics != data) {
+      if (global.tempLyrics != data || data.contains("play()")) {
         global.tempLyrics = data;
         update(LiveItem(data));
       }

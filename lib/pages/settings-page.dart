@@ -208,7 +208,7 @@ class _SettingsPageState extends State<SettingsPage> {
             PreferenceText(
               AppLocalizations.of(Get.context).getText("help.menu.manual"),
               onTap: () => global.launchURL(
-                  "https://quelea-projection.github.io/docs/Remote_Control_Help"),
+                  "https://quelea-projection.github.io/docs/Remote_Control_Manual"),
             ),
             PreferenceText(
               AppLocalizations.of(Get.context).getText("help.menu.discussion"),
