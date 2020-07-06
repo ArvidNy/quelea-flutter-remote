@@ -12,8 +12,9 @@
 - [x] Stored URL should be checked before auto-connecting
 - [x] Loading opened sometimes again after connected
 - [x] Back button doesn't work sometimes
-- [ ] Timeout on presentations
+- [x] Timeout on presentations
 - [x] Play/pause bug
+- [ ] Slide images are not reset between two presentations
 
 ## Features
 - [x] Connecting to a server

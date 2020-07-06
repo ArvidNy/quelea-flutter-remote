@@ -42,7 +42,7 @@ class DownloadHandler {
     try {
       var data = await http
           .get(urlString)
-          .timeout(timeout ?? Duration(milliseconds: 500));
+          .timeout(timeout ?? Duration(milliseconds: 5000));
       if (data.statusCode == 200) {
         _parseData(utf8.decode(data.bodyBytes), urlString, update);
       } else {
