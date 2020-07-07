@@ -14,7 +14,7 @@
 - [x] Back button doesn't work sometimes
 - [x] Timeout on presentations
 - [x] Play/pause bug
-- [ ] Slide images are not reset between two presentations
+- [x] Slide images are not reset between two presentations
 
 ## Features
 - [x] Connecting to a server

@@ -22,7 +22,6 @@ import './widgets/schedule-item.dart';
 import 'handlers/key-event-handler.dart';
 
 class MainPage extends StatefulWidget {
-
   @override
   _MainState createState() {
     return _MainState();
@@ -51,8 +50,8 @@ class _MainState extends State<MainPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!global.syncHandler.isConnected) {
         DownloadHandler().showLoadingIndicator();
-        DownloadHandler().testConnection(global.url,
-            PrefService.getBool("use_autoconnect") ?? false);
+        DownloadHandler().testConnection(
+            global.url, PrefService.getBool("use_autoconnect") ?? false);
       }
     });
   }
@@ -69,8 +68,8 @@ class _MainState extends State<MainPage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       if (!global.syncHandler.isConnected) {
         DownloadHandler().showLoadingIndicator();
-        DownloadHandler().testConnection(global.url,
-            PrefService.getBool("use_autoconnect") ?? false);
+        DownloadHandler().testConnection(
+            global.url, PrefService.getBool("use_autoconnect") ?? false);
       }
     } else if (state == AppLifecycleState.paused) {
       global.syncHandler.stop();
@@ -134,15 +133,15 @@ class _MainState extends State<MainPage> with WidgetsBindingObserver {
     if (newItem) offset = 0;
 
     // Workaround for images getting cached between two presentations and the wrong image appearing
-    if (this._liveItem.isPresentation &&
-        liveItem.isPresentation &&
-        this._liveItem.titleText != liveItem.titleText) {
+    if (this._liveItem.isPresentation && liveItem.isPresentation && newItem) {
       setState(() {
         this._liveItem = LiveItem("");
         PaintingBinding.instance.imageCache.clear();
-        Future.delayed(Duration(milliseconds: 1000)).then((value) {
-          this._liveItem = liveItem;
-          _itemScrollController.jumpTo(offset);
+        Future.delayed(Duration(milliseconds: 400)).then((value) {
+          setState(() {
+            this._liveItem = liveItem;
+            _itemScrollController.jumpTo(offset);
+          });
         });
       });
     } else {
