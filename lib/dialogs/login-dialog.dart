@@ -16,13 +16,17 @@ Widget getLoginDialog(String message, bool isPassword) {
     controller: TextEditingController(text: isPassword ? "" : global.url),
     keyboardType: TextInputType.url,
     decoration: InputDecoration(
-        border: OutlineInputBorder(), labelText: isPassword ? "" : global.url),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Get.theme.indicatorColor)),
+        focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Get.theme.indicatorColor)),
+        labelText: isPassword ? "" : global.url,
+        labelStyle: TextStyle(color: Get.theme.textTheme.bodyText1.color)),
     onSubmitted: (text) {
       if (global.debug) debugPrint("submitted");
       if (isPassword) {
         _sendPassword(input);
-      } else {
-      }
+      } else {}
     },
   );
   return WillPopScope(
@@ -49,8 +53,8 @@ Widget getLoginDialog(String message, bool isPassword) {
         // Exit is not allowed for iOS apps
         Platform.isAndroid
             ? FlatButton(
-                child:
-                    Text(AppLocalizations.of(Get.context).getText("exit.button")),
+                child: Text(
+                    AppLocalizations.of(Get.context).getText("exit.button")),
                 onPressed: () {
                   SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                 },

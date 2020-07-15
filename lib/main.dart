@@ -35,11 +35,13 @@ class QueleaMobileRemote extends StatelessWidget {
               brightness: Brightness.light,
               primaryColor: Colors.black,
               accentColor: Colors.grey[800],
+              indicatorColor: Colors.grey[600],
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
               primaryColor: Colors.black,
               accentColor: Colors.grey[800],
+              indicatorColor: Colors.grey[600],
             ),
             themeMode: (PrefService.getString("app_theme") ?? "light")
                     .contains("light") ? ThemeMode.light : ThemeMode.dark,

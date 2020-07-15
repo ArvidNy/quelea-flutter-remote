@@ -15,6 +15,8 @@
 - [x] Timeout on presentations
 - [x] Play/pause bug
 - [x] Slide images are not reset between two presentations
+- [x] Remove HTML from current item text
+- [x] The borders of the input dialog box is not visible in the dark theme
 
 ## Features
 - [x] Connecting to a server

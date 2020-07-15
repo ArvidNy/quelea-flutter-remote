@@ -90,7 +90,7 @@ class LiveItem {
   /// Returns a string with what currently is being displayed.
   String _getTitle(String html) {
     if (!html.contains("<i>")) return "";
-    return html.substring(html.indexOf("<i>") + 3, html.indexOf("<br/></i>"));
+    return html.substring(html.indexOf("<i>") + 3, html.indexOf("<br/></i>")).replaceAll("<br/>", "");
   }
 
   String _getSectionTitle(int i) {
