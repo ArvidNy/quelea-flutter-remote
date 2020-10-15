@@ -1,7 +1,7 @@
 name: org.quelea.mobileremote
 description: An app for remote controlling the projector software Quelea.
 
-version: 0.1.0
+version: 5.0.0+31
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -11,17 +11,17 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  html: ^0.14.0+2
-  preferences: ^5.2.0
-  cupertino_icons: ^0.1.2
-  flutter_launcher_icons: "^0.7.3"
-  url_launcher: ^5.4.11
-  connectivity: ^0.4.8+6
+  html: ^0.14.0+4
+  preferences: ^5.2.1
+  cupertino_icons: ^1.0.0
+  flutter_launcher_icons: ^0.8.1
+  url_launcher: ^5.7.2
+  connectivity: ^0.4.9+3
   ping_discover_network: ^0.2.0+1
-  indexed_list_view: ^1.0.9
-  http: ^0.12.1
-  wakelock: ^0.1.4+1
-  get: ^3.2.1
+  indexed_list_view: ^1.1.5
+  http: ^0.12.2
+  wakelock: ^0.1.4+2
+  get: ^3.13.2
 
 dev_dependencies:
   flutter_test:

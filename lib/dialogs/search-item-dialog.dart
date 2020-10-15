@@ -29,7 +29,7 @@ void showAddSearchItemDialog(
         },
       ),
       FlatButton(
-        child: Text("Add"),
+        child: Text(AppLocalizations.of(Get.context).getText("add.text")),
         onPressed: () {
           DownloadHandler().sendSignal(global.url + "/add/$id", () => {});
           closeSearch();

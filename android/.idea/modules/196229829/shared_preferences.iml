@@ -115,7 +115,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 28 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Gradle: io.flutter:flutter_embedding_debug:1.0.0-ee76268252c22f5c11e82a7b87423ca3982e51a7@jar" level="project" />
+    <orderEntry type="library" name="Gradle: io.flutter:flutter_embedding_debug:1.0.0-d1bc06f032f9d6c148ea6b96b48261d6f545004f@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-common-java8:2.2.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-common:2.2.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.arch.core:core-common:2.1.0@jar" level="project" />

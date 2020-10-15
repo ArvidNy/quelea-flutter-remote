@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:preferences/preference_service.dart';
 
 import '../handlers/download-handler.dart';
 import '../handlers/language-delegate.dart';
@@ -17,14 +18,19 @@ class ScheduleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool lightMode =
+        (PrefService.getString("app_theme") ?? "light").contains("light");
     Color backgroundColor;
+    Color textColor = lightMode ? Colors.black : Colors.white;
     if (isLive) {
       backgroundColor = Colors.lightBlue.shade500;
     } else if (isPreview) {
       backgroundColor = Colors.grey.shade300;
+      textColor = Colors.black;
     } else {
       backgroundColor = Colors.transparent;
     }
+
     return InkWell(
       child: Container(
         height: 45,
@@ -33,6 +39,7 @@ class ScheduleItem extends StatelessWidget {
         child: Text(
           title.trim(),
           overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: textColor),
         ),
       ),
       onTap: () {

@@ -232,9 +232,10 @@ class DownloadHandler {
   void autoConnect() async {
     if (await (Connectivity().checkConnectivity()) == ConnectivityResult.wifi) {
       var wifiIP = await (Connectivity().getWifiIP());
+      if (global.debug) debugPrint(wifiIP);
       final stream = ServerSearchHandler.discover2(
           wifiIP.substring(0, wifiIP.lastIndexOf(".")), 50015,
-          timeout: Duration(milliseconds: 1000), start: 1, end: 200);
+          timeout: Duration(milliseconds: 3000), start: 1, end: 200);
       // iOS devices (or at least the simulator) seem to get overloaded when
       // searching all 256 IP numbers, so only pinging the first 200 here.
       // If the server would be located at a higher IP, it can be entered manually.
@@ -287,7 +288,8 @@ class DownloadHandler {
         }
         testConnection(remoteUrl, false);
       }
-    }, timeout: Duration(seconds: 2)).catchError((e) => debugPrint("error: $e"));
+    }, timeout: Duration(seconds: 2)).catchError(
+        (e) => debugPrint("error: $e"));
   }
 
   Future _testConnection(String urlString) async {

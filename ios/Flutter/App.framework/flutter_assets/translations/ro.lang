@@ -1,8 +1,0 @@
-remote.failed.finding.server=Nu găsesc serverul Quelea Mobil îndepărtat. Verificați dacă Quelea este pornită si dacă ați introdus URL-ul corect.
-remote.enable.volume.navigation=Activați navigare prin volum
-remote.volume.navigation.description=Utilizați tastele de volum a telefonului pentru a comuta înainte sau înapoi între elemente.
-remote.enable.dpad.navigation=Activați navigare prin d-pad
-remote.dpad.navigation.description=Utilizați tastele d-pad (sus/jos) pentru a naviga la urmatorul sau anteriorul element. Dacă vrei sa folosești o tastatură cu bluetooth sau o pedală (precum AirTurn), activează asta.
-remote.about.text.app=Această aplicație este fără profit, făcută pentru a utiliza aplicația open source pentru biserici Quelea (http://quelea.org). Chiar dacă nu mai este în beta, încă nu este perfectă, nici completă. Acesta este un proiect făcut pentru uz presonal, dar împărțit cu bucurie cu cei ce găsesc vre-un folos în ea.
-remote.about.text.support=Simte te liber să-mi trimiți un email (arvid @ quelea.org) dacă ai întrebări, sau experimentezi erori, dar asigură te că pornești Quelea îninte de aplicația(cu samvele servere active), că ambele dispozitive sunt conectate la aceași rețea și că întăi ai introdus URL-ul corect.
-remote.about.text.responsibility=Nu garantez o experiență perfectă, deci nu iau responsabilitatea pentru orice problemă care se ivește la propriu.

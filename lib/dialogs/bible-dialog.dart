@@ -59,8 +59,7 @@ void _showBibleDialog(String title, List items, Function closeSearch) {
         itemBuilder: (BuildContext context, int index) {
           return items[index].toString().isNotEmpty
               ? InkWell(
-                  onTap: () =>
-                      _closeAndReturnItem(items[index], closeSearch),
+                  onTap: () => _closeAndReturnItem(items[index], closeSearch),
                   child: Container(
                       height: 45, child: Center(child: Text(items[index]))),
                 )
@@ -107,7 +106,7 @@ void _showBibleChapterDialog(
                     .download(global.url + "/gotoitem9999", () => {}));
           }),
       FlatButton(
-          child: Text(AppLocalizations.of(Get.context).getText("ok.button")),
+          child: Text(AppLocalizations.of(Get.context).getText("add.text")),
           onPressed: () {
             Get.back(closeOverlays: true);
             _itemScrollController.jumpToIndex(0);
@@ -122,40 +121,64 @@ void _showBibleChapterDialog(
       builder: (context, setState) {
         return Container(
           width: 500,
-          child: Stack(
+          child: Column(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  _getNumberListView(
-                      _getNumberListFromBibleBook("$bookNum,", true), chapter,
-                      (index) {
-                    setState(() {
-                      chapter = index + 1;
-                    });
-                  }, false),
-                  _getNumberListView(
-                      _getNumberListFromBibleBook("$bookNum,$chapter,", false),
-                      verseStart, (index) {
-                    setState(() {
-                      verseStart = index + 1;
-                      if (verseEnd < verseStart) {
-                        verseEnd = index + 1;
-                        _itemScrollController.jumpToIndex(index);
-                      }
-                    });
-                  }, false),
-                  _getNumberListView(
-                      _getNumberListFromBibleBook("$bookNum,$chapter,", false),
-                      verseEnd, (index) {
-                    setState(() {
-                      verseEnd = index + 1;
-                    });
-                  }, true),
-                ],
+              Text(
+                  "$book ${getPassageName(chapter, verseStart, verseEnd)}, $translation"),
+              Container(
+                height: 20,
               ),
-              Text("Add $book " +
-                  getPassageName(chapter, verseStart, verseEnd) +
-                  "\nin $translation"),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Column(
+                      children: [
+                        Text(AppLocalizations.of(Get.context).getText("remote.chapter")),
+                        _getNumberListView(
+                            _getNumberListFromBibleBook("$bookNum,", true),
+                            chapter, (index) {
+                          setState(() {
+                            chapter = index + 1;
+                          });
+                        }, false),
+                      ],
+                    )),
+                    Expanded(
+                        child: Column(
+                      children: [
+                        Text(AppLocalizations.of(Get.context).getText("remote.start.verse")),
+                        _getNumberListView(
+                            _getNumberListFromBibleBook(
+                                "$bookNum,$chapter,", false),
+                            verseStart, (index) {
+                          setState(() {
+                            verseStart = index + 1;
+                            if (verseEnd < verseStart) {
+                              verseEnd = index + 1;
+                              _itemScrollController.jumpToIndex(index);
+                            }
+                          });
+                        }, false),
+                      ],
+                    )),
+                    Expanded(
+                        child: Column(
+                      children: [
+                        Text(AppLocalizations.of(Get.context).getText("remote.end.verse")),
+                        _getNumberListView(
+                            _getNumberListFromBibleBook(
+                                "$bookNum,$chapter,", false),
+                            verseEnd, (index) {
+                          setState(() {
+                            verseEnd = index + 1;
+                          });
+                        }, true),
+                      ],
+                    )),
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -174,7 +197,6 @@ _getNumberListView(
     List items, int i, Function onTapAction, bool useItemScrollController) {
   return Expanded(
     child: Container(
-      padding: EdgeInsets.only(top: 40),
       width: double.maxFinite,
       child: useItemScrollController
           ? IndexedListView.builder(

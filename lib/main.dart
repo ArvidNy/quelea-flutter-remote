@@ -25,6 +25,7 @@ class QueleaMobileRemote extends StatelessWidget {
         builder: (context, snapshot) {
           return GetMaterialApp(
             title: "Quelea Mobile Remote",
+            debugShowCheckedModeBanner: global.debug,
             supportedLocales: getSupportedLocales(),
             localizationsDelegates: [
               AppLocalizationsDelegate(),
