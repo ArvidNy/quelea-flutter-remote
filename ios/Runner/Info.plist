@@ -10,8 +10,6 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Quelea Mobile Remote</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en_US</string>
@@ -37,6 +35,8 @@
 		<string>sv</string>
 		<string>sw</string>
 	</array>
+	<key>CFBundleName</key>
+	<string>Quelea Mobile Remote</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -47,6 +47,11 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -66,10 +71,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
+	<key>NSLocationAlwaysUsageDescription</key>
+    <string>Quelea Mobile Remote requires accessing your location information if you want to search for the server automatically to get wi-fi information.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Quelea Mobile Remote requires accessing your location information if you want to search for the server automatically to get wi-fi information.</string>
 </dict>
 </plist>

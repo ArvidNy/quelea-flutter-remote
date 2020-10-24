@@ -47,6 +47,7 @@ class QueleaMobileRemote extends StatelessWidget {
             themeMode: (PrefService.getString("app_theme") ?? "light")
                     .contains("light") ? ThemeMode.light : ThemeMode.dark,
             home: Scaffold(
+              resizeToAvoidBottomPadding: false,
               body: MainPage(),
             ),
           );

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 
 import '../handlers/download-handler.dart';
@@ -39,11 +41,13 @@ Widget getLoginDialog(String message, bool isPassword) {
           Expanded(
               child: Text(
             message,
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 16),
           )),
           isPassword
               ? Container()
               : IconButton(
+                  tooltip:
+                      AppLocalizations.of(Get.context).getText("help.menu"),
                   icon: Icon(Icons.help),
                   onPressed: () => global.launchURL(
                       "https://quelea-projection.github.io/docs/Remote_Control_Troubleshooting"))
@@ -54,7 +58,8 @@ Widget getLoginDialog(String message, bool isPassword) {
         Platform.isAndroid
             ? FlatButton(
                 child: Text(
-                    AppLocalizations.of(Get.context).getText("exit.button")),
+                  AppLocalizations.of(Get.context).getText("exit.button"),
+                ),
                 onPressed: () {
                   SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                 },
@@ -63,8 +68,10 @@ Widget getLoginDialog(String message, bool isPassword) {
         isPassword
             ? Container()
             : FlatButton(
-                child: Text(AppLocalizations.of(Get.context)
-                    .getText("remote.search.server")),
+                child: Text(
+                  AppLocalizations.of(Get.context)
+                      .getText("remote.search.server"),
+                ),
                 onPressed: () {
                   Get.back(closeOverlays: true);
                   DownloadHandler().showLoadingIndicator();
@@ -72,7 +79,9 @@ Widget getLoginDialog(String message, bool isPassword) {
                 },
               ),
         FlatButton(
-          child: Text(AppLocalizations.of(Get.context).getText("ok.button")),
+          child: Text(
+            AppLocalizations.of(Get.context).getText("ok.button"),
+          ),
           onPressed: () {
             Get.back(closeOverlays: true);
             if (isPassword) {
@@ -84,7 +93,9 @@ Widget getLoginDialog(String message, bool isPassword) {
           },
         ),
       ],
-      content: textField,
+      content: Get.height < 600
+          ? CustomTextField((value) => input = value)
+          : textField,
     ),
   );
 }
@@ -92,4 +103,81 @@ Widget getLoginDialog(String message, bool isPassword) {
 void _sendPassword(String password) async {
   await DownloadHandler().postPassword(global.url, password);
   DownloadHandler().testConnection(global.url, false);
+}
+
+class CustomTextField extends StatefulWidget {
+  final Function setInput;
+  CustomTextField(this.setInput);
+
+  @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  String url = global.url;
+
+  void _setUrl(String url) {
+    setState(() {
+      this.url = url;
+    });
+    widget.setInput(url);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.centerLeft,
+      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      height: 50,
+      child: InkWell(
+        child: Container(margin: EdgeInsets.only(left: 6), child: Text(url)),
+        onTap: () => Navigator.of(Get.context).push(
+          MaterialPageRoute(
+            builder: (context) => SecondRoute(_setUrl, url),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  final Function setUrl;
+  final String url;
+  final TextEditingController controller = TextEditingController();
+
+  SecondRoute(this.setUrl, this.url);
+
+  @override
+  Widget build(BuildContext context) {
+    controller.text = url;
+    KeyboardVisibility.onChange.listen((bool visible) {
+      if (!visible) {
+        Navigator.pop(context);
+        setUrl(controller.text);
+      }
+    });
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  hintText: global.url,
+                ),
+                controller: controller,
+                scrollPadding: EdgeInsets.all(20.0),
+                keyboardType: TextInputType.multiline,
+                maxLines: 1,
+                autofocus: true,
+              )
+            ],
+          ),
+        ),
+      ),
+      resizeToAvoidBottomPadding: true,
+    );
+  }
 }

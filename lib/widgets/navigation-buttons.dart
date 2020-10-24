@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'package:preferences/preferences.dart';
 
 import '../handlers/download-handler.dart';
+import '../handlers/language-delegate.dart';
 import '../utils/global-utils.dart';
 
-/// A class that returns a widget with 
+/// A class that returns a widget with
 /// the side navigation buttons.
 class NavigationButtons extends StatelessWidget {
   @override
@@ -18,12 +19,14 @@ class NavigationButtons extends StatelessWidget {
         Container(
           height: 12,
         ),
-        _slideButton(() => DownloadHandler().sendSignal(url + "/prev", () => {}),
+        _slideButton(
+            () => DownloadHandler().sendSignal(url + "/prev", () => {}),
             "images/btn_prev_slide.png"),
         Container(
           height: 12,
         ),
-        _slideButton(() => DownloadHandler().sendSignal(url + "/next", () => {}),
+        _slideButton(
+            () => DownloadHandler().sendSignal(url + "/next", () => {}),
             "images/btn_next_slide.png"),
         Container(
           height: 12,
@@ -36,34 +39,51 @@ class NavigationButtons extends StatelessWidget {
   }
 
   _itemButton(void Function() clickFunction, String imagePath) {
-    bool isLightTheme = (PrefService.getString("app_theme") ?? "light").contains("light");
-    return Container(
-      width: 52,
-      height: MediaQuery.of(Get.context).size.height * 0.1,
-      child: RaisedButton(
-          onPressed: clickFunction,
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: isLightTheme ? Colors.black12 : Colors.white, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(22))),
-          color: isLightTheme ? Colors.grey.shade300 : Colors.grey[800],
-          child: Image.asset(imagePath)),
+    bool isLightTheme =
+        (PrefService.getString("app_theme") ?? "light").contains("light");
+    return Tooltip(
+      message: imagePath.contains("next")
+          ? AppLocalizations.of(Get.context).getText("remote.nextitem.text")
+          : AppLocalizations.of(Get.context).getText("remote.previtem.text"),
+      child: Container(
+        width: 52,
+        height: MediaQuery.of(Get.context).size.height * 0.1,
+        child: RaisedButton(
+            onPressed: clickFunction,
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(
+                    color: isLightTheme ? Colors.black12 : Colors.white,
+                    width: 1),
+                borderRadius: BorderRadius.all(Radius.circular(22))),
+            color: isLightTheme ? Colors.grey.shade300 : Colors.grey[800],
+            child: Image.asset(imagePath)),
+      ),
     );
   }
 
   _slideButton(void Function() clickFunction, String imagePath) {
-    bool isLightTheme = (PrefService.getString("app_theme") ?? "light").contains("light");
+    bool isLightTheme =
+        (PrefService.getString("app_theme") ?? "light").contains("light");
     return Expanded(
+      child: Tooltip(
+        message: imagePath.contains("next")
+            ? AppLocalizations.of(Get.context).getText("remote.next.text")
+            : AppLocalizations.of(Get.context).getText("remote.prev.text"),
         child: Container(
-      width: 52,
-      child: RaisedButton(
-          onPressed: clickFunction,
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: isLightTheme ? Colors.black12 : Colors.white, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(22))),
-          color: isLightTheme ? Colors.grey.shade300 : Colors.grey[800],
-          child: Image.asset(imagePath)),
-    ));
+          width: 52,
+          child: RaisedButton(
+              onPressed: clickFunction,
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                      color: isLightTheme ? Colors.black12 : Colors.white,
+                      width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(22))),
+              color: isLightTheme ? Colors.grey.shade300 : Colors.grey[800],
+              child: Image.asset(imagePath)),
+        ),
+      ),
+    );
   }
 }

@@ -185,6 +185,7 @@ class _MainState extends State<MainPage> with WidgetsBindingObserver {
           handleKeyEvent(event, settingsStateFunctions, _liveItem),
       child: WillPopScope(
         child: Scaffold(
+          resizeToAvoidBottomPadding: false,
           key: global.drawerScaffoldKey,
           drawer:
               ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),

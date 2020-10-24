@@ -24,12 +24,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>connectivity_for_web.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>connectivity_macos.xcscheme</key>
+		<key>flutter_keyboard_visibility.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -39,37 +34,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>shared_preferences_macos.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>shared_preferences_web.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>url_launcher.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>url_launcher_linux.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>url_launcher_macos.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>url_launcher_web.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>url_launcher_windows.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
