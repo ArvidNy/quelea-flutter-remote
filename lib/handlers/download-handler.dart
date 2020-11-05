@@ -41,6 +41,7 @@ class DownloadHandler {
     try {
       var url = Uri.parse(urlString);
       var httpClient = HttpClient();
+      httpClient.connectionTimeout = timeout ?? Duration(milliseconds: 5000);
       httpClient.badCertificateCallback =
           ((X509Certificate cert, String host, int port) => true);
       var request = await httpClient.getUrl(url);
