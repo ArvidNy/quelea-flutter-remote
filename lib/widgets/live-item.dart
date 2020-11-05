@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 
+import '../handlers/ssl-network-image.dart';
 import '../objects/item-slide.dart';
 import '../utils/global-utils.dart' as global;
 import '../utils/html-parser.dart' as parser;
@@ -27,9 +28,9 @@ class LiveItem {
     activeSlide = getActiveSlide(_html);
     if (_html.contains("play()")) {
       String play = global.statusHandler.play;
-        isMedia = true;
-        itemSlides.clear();
-        itemSlides.add(ItemSlide("\n$play\n"));
+      isMedia = true;
+      itemSlides.clear();
+      itemSlides.add(ItemSlide("\n$play\n"));
     }
   }
 
@@ -55,10 +56,20 @@ class LiveItem {
                 ),
           isPresentation
               ? Center(
-                  child: FadeInImage.assetNetwork(
-                      key: ValueKey(titleText.toString() + i.toString()),
-                      placeholder: 'images/loading.gif',
-                      image: global.url + "/slides/slide${i + 1}.png"))
+                  child: global.url.startsWith("https")
+                      ? FadeInImage(
+                          image: NetworkImageSSL(
+                              "${global.url}/slides/slide${i + 1}.png"),
+                          key: ValueKey(
+                            titleText.toString() + i.toString(),
+                          ),
+                          placeholder: AssetImage('images/loading.gif'),
+                        )
+                      : FadeInImage.assetNetwork(
+                          key: ValueKey(titleText.toString() + i.toString()),
+                          placeholder: 'images/loading.gif',
+                          image: global.url + "/slides/slide${i + 1}.png"),
+                )
               : Text(
                   itemSlides[i].lyrics,
                   style: TextStyle(fontSize: 16),
@@ -90,7 +101,9 @@ class LiveItem {
   /// Returns a string with what currently is being displayed.
   String _getTitle(String html) {
     if (!html.contains("<i>")) return "";
-    return html.substring(html.indexOf("<i>") + 3, html.indexOf("<br/></i>")).replaceAll("<br/>", "");
+    return html
+        .substring(html.indexOf("<i>") + 3, html.indexOf("<br/></i>"))
+        .replaceAll("<br/>", "");
   }
 
   String _getSectionTitle(int i) {

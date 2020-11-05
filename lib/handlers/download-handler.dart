@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:get/route_manager.dart';
-import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import '../handlers/server-search-handler.dart';
@@ -40,13 +39,18 @@ class DownloadHandler {
   Future download(String urlString, Function update, {Duration timeout}) async {
     if (global.debug) debugPrint(urlString);
     try {
-      var data = await http
-          .get(urlString)
-          .timeout(timeout ?? Duration(milliseconds: 5000));
-      if (data.statusCode == 200) {
-        _parseData(utf8.decode(data.bodyBytes), urlString, update);
+      var url = Uri.parse(urlString);
+      var httpClient = HttpClient();
+      httpClient.badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
+      var request = await httpClient.getUrl(url);
+      var response = await request.close();
+      var data = await utf8.decoder.bind(response).join();
+      if (response.statusCode == 200) {
+        _parseData(data, urlString, update);
       } else {
-        if (global.debug) debugPrint("Got response code ${data.statusCode}");
+        if (global.debug)
+          debugPrint("Got response code ${response.statusCode}");
       }
       connectionFailed = 0;
     } catch (exception) {
@@ -85,6 +89,8 @@ class DownloadHandler {
     try {
       var url = Uri.parse(urlString);
       var httpClient = HttpClient();
+      httpClient.badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
       var request = await httpClient.getUrl(url);
       var response = await request.close();
       if (response.statusCode != 200) {
@@ -134,6 +140,8 @@ class DownloadHandler {
   Future postPassword(String urlString, String password) async {
     var url = Uri.parse(urlString);
     HttpClient httpClient = HttpClient();
+    httpClient.badCertificateCallback =
+        ((X509Certificate cert, String host, int port) => true);
     var request = await httpClient.postUrl(url);
     request.write("password=$password");
     var response = await request.close();
@@ -152,12 +160,14 @@ class DownloadHandler {
     if (_urlIsOk(url)) {
       global.url = url;
       _testConnection(url).then((onValue) {
+        if (global.debug) debugPrint(onValue["code"].toString());
         if (onValue["code"] == 200) {
           _handleTestResults(onValue, autoConnect, url);
         } else {
           _failedConnectingDialog(autoConnect);
         }
       }).catchError((onError) {
+        if (global.debug) debugPrint(onError.toString());
         _failedConnectingDialog(autoConnect);
       });
     }
@@ -297,6 +307,8 @@ class DownloadHandler {
     var url = Uri.parse(urlString);
     var httpClient = HttpClient();
     httpClient.connectionTimeout = Duration(milliseconds: 3000);
+    httpClient.badCertificateCallback =
+        ((X509Certificate cert, String host, int port) => true);
     var request = await httpClient.getUrl(url);
     var response = await request.close();
     var data = await utf8.decoder.bind(response).toList();
