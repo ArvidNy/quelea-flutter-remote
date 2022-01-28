@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:preferences/preferences.dart';
 
 import '../handlers/language-delegate.dart';
@@ -182,11 +183,12 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
           disabled: false,
           onChange: (value) {
-            settingsFunctions['setState']((){
-              Get.changeThemeMode((PrefService.getString("app_theme") ?? "light")
-                    .contains("light")
-                ? ThemeMode.light
-                : ThemeMode.dark);
+            settingsFunctions['setState'](() {
+              Get.changeThemeMode(
+                  (PrefService.getString("app_theme") ?? "light")
+                          .contains("light")
+                      ? ThemeMode.light
+                      : ThemeMode.dark);
             });
           },
         ),
@@ -253,13 +255,13 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  _showAboutDialog(BuildContext context) {
+  _showAboutDialog(BuildContext context) async {
+    var packageInfo = await PackageInfo.fromPlatform();
     showAboutDialog(
         context: context,
-        applicationName:
-            AppLocalizations.of(Get.context).getText("remote.control.app.name"),
-        applicationVersion: "0.1.0",
-        applicationLegalese: "© Quelea 2020",
+        applicationName: packageInfo.appName,
+        applicationVersion: packageInfo.version,
+        applicationLegalese: "© Quelea ${DateTime.now().year}",
         applicationIcon: Image.asset("images/ic_launcher.png"),
         children: <Widget>[
           Text(AppLocalizations.of(Get.context)

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 
@@ -18,7 +17,6 @@ import './widgets/lyrics-view.dart';
 import './widgets/navigation-buttons.dart';
 import './widgets/schedule-drawer.dart';
 import './widgets/toggle-buttons.dart';
-import './widgets/schedule-item.dart';
 import 'handlers/key-event-handler.dart';
 
 class MainPage extends StatefulWidget {
@@ -29,7 +27,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainState extends State<MainPage> with WidgetsBindingObserver {
-  ScheduleList _scheduleItems = ScheduleList(List<ScheduleItem>());
+  ScheduleList _scheduleItems = ScheduleList([]);
   bool _isLogo = false;
   bool _isBlack = false;
   bool _isClear = false;
@@ -185,7 +183,7 @@ class _MainState extends State<MainPage> with WidgetsBindingObserver {
           handleKeyEvent(event, settingsStateFunctions, _liveItem),
       child: WillPopScope(
         child: Scaffold(
-          resizeToAvoidBottomPadding: false,
+          resizeToAvoidBottomInset: false,
           key: global.drawerScaffoldKey,
           drawer:
               ScheduleDrawer(_scheduleItems.getList(), settingsStateFunctions),

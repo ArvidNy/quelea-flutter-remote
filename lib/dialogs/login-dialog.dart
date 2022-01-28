@@ -56,7 +56,7 @@ Widget getLoginDialog(String message, bool isPassword) {
       actions: <Widget>[
         // Exit is not allowed for iOS apps
         Platform.isAndroid
-            ? FlatButton(
+            ? TextButton(
                 child: Text(
                   AppLocalizations.of(Get.context).getText("exit.button"),
                 ),
@@ -67,7 +67,7 @@ Widget getLoginDialog(String message, bool isPassword) {
             : Column(),
         isPassword
             ? Container()
-            : FlatButton(
+            : TextButton(
                 child: Text(
                   AppLocalizations.of(Get.context)
                       .getText("remote.search.server"),
@@ -78,7 +78,7 @@ Widget getLoginDialog(String message, bool isPassword) {
                   DownloadHandler().autoConnect();
                 },
               ),
-        FlatButton(
+        TextButton(
           child: Text(
             AppLocalizations.of(Get.context).getText("ok.button"),
           ),
@@ -151,7 +151,7 @@ class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     controller.text = url;
-    KeyboardVisibility.onChange.listen((bool visible) {
+    KeyboardVisibilityController().onChange.listen((bool visible) {
       if (!visible) {
         Navigator.pop(context);
         setUrl(controller.text);
@@ -177,7 +177,7 @@ class SecondRoute extends StatelessWidget {
           ),
         ),
       ),
-      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
     );
   }
 }

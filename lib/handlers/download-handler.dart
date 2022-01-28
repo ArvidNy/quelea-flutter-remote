@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:get/route_manager.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import '../handlers/server-search-handler.dart';
 import 'package:ping_discover_network/ping_discover_network.dart';
 import 'package:preferences/preference_service.dart';
@@ -130,7 +131,7 @@ class DownloadHandler {
       Get.rawSnackbar(
           message: data,
           duration: Duration(seconds: 3),
-          backgroundColor: Get.theme.accentColor);
+          backgroundColor: Get.theme.colorScheme.secondary);
       update();
     } else {
       update(data);
@@ -175,17 +176,18 @@ class DownloadHandler {
   }
 
   void _handleTestResults(onValue, bool autoConnect, String url) {
+    if (global.debug) print(onValue['data']);
     Get.back(closeOverlays: true);
     if (onValue["data"].toString().contains("password")) {
       Get.dialog(getLoginDialog(
           AppLocalizations.of(Get.context).getText("remote.control.password"),
           true));
-    } else if (onValue["data"].toString().contains("logobutton")) {
+    } else if (onValue["data"].toString().contains("logoButton")) {
       global.syncHandler.isConnected = true;
       Get.rawSnackbar(
           message: AppLocalizations.of(Get.context).getText("remote.connected"),
           duration: Duration(seconds: 3),
-          backgroundColor: Get.theme.accentColor);
+          backgroundColor: Get.theme.colorScheme.secondary);
       PrefService.setString("server_url", url);
       FocusScope.of(Get.context).requestFocus(global.focusNode);
       global.syncHandler.start();
@@ -242,7 +244,7 @@ class DownloadHandler {
 
   void autoConnect() async {
     if (await (Connectivity().checkConnectivity()) == ConnectivityResult.wifi) {
-      var wifiIP = await (Connectivity().getWifiIP());
+      var wifiIP = await (NetworkInfo().getWifiIP());
       if (global.debug) debugPrint(wifiIP);
       final stream = ServerSearchHandler.discover2(
           wifiIP.substring(0, wifiIP.lastIndexOf(".")), 50015,
@@ -326,7 +328,7 @@ class DownloadHandler {
             AppLocalizations.of(Get.context)
                 .getText("navigate.remote.control.label"),
             false)),
-        backgroundColor: Get.theme.accentColor);
+        backgroundColor: Get.theme.colorScheme.secondary);
   }
 
   void _showSignalFailedSnackbar() {
@@ -334,6 +336,6 @@ class DownloadHandler {
         message:
             AppLocalizations.of(Get.context).getText("remote.signal.failed"),
         duration: Duration(seconds: 3),
-        backgroundColor: Get.theme.accentColor);
+        backgroundColor: Get.theme.colorScheme.secondary);
   }
 }

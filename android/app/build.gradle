@@ -32,20 +32,17 @@ def keystoreProperties = new Properties()
    }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId "org.quelea.mobileremote"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -63,6 +60,9 @@ android {
            signingConfig signingConfigs.release
        }
    }
+    lint {
+        disable 'InvalidPackage'
+    }
 }
 
 flutter {

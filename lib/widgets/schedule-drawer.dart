@@ -115,10 +115,10 @@ class ScheduleDrawer extends StatelessWidget {
   void _openSettings(Map<String, Function> _settingsFunctions) {
     Get.back();
     Get.to(
-        SettingsPage(
-          title: AppLocalizations.of(Get.context).getText("options.title"),
-          settingsFunctions: _settingsFunctions,
-        ),
+        () => SettingsPage(
+              title: AppLocalizations.of(Get.context).getText("options.title"),
+              settingsFunctions: _settingsFunctions,
+            ),
         transition: Transition.rightToLeft);
   }
 }

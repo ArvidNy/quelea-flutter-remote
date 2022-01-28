@@ -6,6 +6,7 @@ import 'package:preferences/preferences.dart';
 import 'package:wakelock/wakelock.dart';
 
 import './main-content.dart';
+import './utils/color-utils.dart';
 import './utils/global-utils.dart' as global;
 import './handlers/language-delegate.dart';
 
@@ -35,19 +36,37 @@ class QueleaMobileRemote extends StatelessWidget {
             theme: ThemeData(
               brightness: Brightness.light,
               primaryColor: Colors.black,
-              accentColor: Colors.grey[800],
               indicatorColor: Colors.grey[600],
+              appBarTheme: AppBarTheme(
+                backgroundColor: Colors.black,
+                titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+              colorScheme: ColorScheme.fromSwatch(primarySwatch: primaryBlack)
+                  .copyWith(
+                      brightness: Brightness.light,
+                      secondary: Colors.grey[800]),
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
               primaryColor: Colors.black,
-              accentColor: Colors.grey[800],
               indicatorColor: Colors.grey[600],
+              primarySwatch: primaryBlack,
+              appBarTheme: AppBarTheme(
+                backgroundColor: Colors.black,
+                titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+              colorScheme: ColorScheme.fromSwatch(primarySwatch: primaryBlack)
+                  .copyWith(
+                      brightness: Brightness.dark, secondary: Colors.grey[800]),
             ),
             themeMode: (PrefService.getString("app_theme") ?? "light")
-                    .contains("light") ? ThemeMode.light : ThemeMode.dark,
+                    .contains("light")
+                ? ThemeMode.light
+                : ThemeMode.dark,
             home: Scaffold(
-              resizeToAvoidBottomPadding: false,
+              resizeToAvoidBottomInset: false,
               body: MainPage(),
             ),
           );
