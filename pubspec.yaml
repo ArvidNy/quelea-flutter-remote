@@ -1,7 +1,7 @@
 name: org.quelea.mobileremote
 description: An app for remote controlling the projector software Quelea.
 
-version: 5.0.1+36
+version: 5.0.2+37
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

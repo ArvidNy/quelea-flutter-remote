@@ -182,7 +182,7 @@ class DownloadHandler {
       Get.dialog(getLoginDialog(
           AppLocalizations.of(Get.context).getText("remote.control.password"),
           true));
-    } else if (onValue["data"].toString().contains("logoButton")) {
+    } else if (onValue["data"].toString().contains("logoButton") || onValue["data"].toString().contains("logobutton")) {
       global.syncHandler.isConnected = true;
       Get.rawSnackbar(
           message: AppLocalizations.of(Get.context).getText("remote.connected"),
